@@ -18,3 +18,13 @@ F:\Evolution 3.0\Evolution 3.0\obj\Debug\Evolution 3.0.csproj.GenerateResource.C
 F:\Evolution 3.0\Evolution 3.0\obj\Debug\Evolution 3.0.csproj.CoreCompileInputs.cache
 F:\Evolution 3.0\Evolution 3.0\obj\Debug\Evolution 3.0.exe
 F:\Evolution 3.0\Evolution 3.0\obj\Debug\Evolution 3.0.pdb
+D:\Evolution 3.0\Evolution 3.0\bin\Debug\Evolution 3.0.exe.config
+D:\Evolution 3.0\Evolution 3.0\bin\Debug\Evolution 3.0.exe
+D:\Evolution 3.0\Evolution 3.0\bin\Debug\Evolution 3.0.pdb
+D:\Evolution 3.0\Evolution 3.0\obj\Debug\Evolution 3.0.csprojResolveAssemblyReference.cache
+D:\Evolution 3.0\Evolution 3.0\obj\Debug\Evolution_3._0.Form1.resources
+D:\Evolution 3.0\Evolution 3.0\obj\Debug\Evolution_3._0.Properties.Resources.resources
+D:\Evolution 3.0\Evolution 3.0\obj\Debug\Evolution 3.0.csproj.GenerateResource.Cache
+D:\Evolution 3.0\Evolution 3.0\obj\Debug\Evolution 3.0.csproj.CoreCompileInputs.cache
+D:\Evolution 3.0\Evolution 3.0\obj\Debug\Evolution 3.0.exe
+D:\Evolution 3.0\Evolution 3.0\obj\Debug\Evolution 3.0.pdb

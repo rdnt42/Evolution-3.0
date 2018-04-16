@@ -37,6 +37,8 @@
             this.labelCellsShow = new System.Windows.Forms.Label();
             this.labelCells = new System.Windows.Forms.Label();
             this.dataGridViewInfo = new System.Windows.Forms.DataGridView();
+            this.labelFoods = new System.Windows.Forms.Label();
+            this.labelFoodShow = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewInfo)).BeginInit();
             this.SuspendLayout();
             // 
@@ -111,11 +113,33 @@
             this.dataGridViewInfo.Size = new System.Drawing.Size(260, 312);
             this.dataGridViewInfo.TabIndex = 9;
             // 
+            // labelFoods
+            // 
+            this.labelFoods.AutoSize = true;
+            this.labelFoods.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.labelFoods.Location = new System.Drawing.Point(1092, 58);
+            this.labelFoods.Name = "labelFoods";
+            this.labelFoods.Size = new System.Drawing.Size(24, 26);
+            this.labelFoods.TabIndex = 11;
+            this.labelFoods.Text = "0";
+            // 
+            // labelFoodShow
+            // 
+            this.labelFoodShow.AutoSize = true;
+            this.labelFoodShow.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.labelFoodShow.Location = new System.Drawing.Point(1092, 23);
+            this.labelFoodShow.Name = "labelFoodShow";
+            this.labelFoodShow.Size = new System.Drawing.Size(72, 26);
+            this.labelFoodShow.TabIndex = 10;
+            this.labelFoodShow.Text = "Foods";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1352, 661);
+            this.Controls.Add(this.labelFoods);
+            this.Controls.Add(this.labelFoodShow);
             this.Controls.Add(this.dataGridViewInfo);
             this.Controls.Add(this.labelCells);
             this.Controls.Add(this.labelCellsShow);
@@ -141,6 +165,8 @@
         private System.Windows.Forms.Label labelCellsShow;
         private System.Windows.Forms.Label labelCells;
         private System.Windows.Forms.DataGridView dataGridViewInfo;
+        private System.Windows.Forms.Label labelFoods;
+        private System.Windows.Forms.Label labelFoodShow;
     }
 }
 

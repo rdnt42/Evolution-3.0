@@ -18,6 +18,8 @@ namespace Evolution_3._0
         int stepLength;
         int x;
         int y;
+        public int prewX;
+        public int prewY;
 
         public Cells(int carbon, int xCell, int yCell)
         {
@@ -26,10 +28,11 @@ namespace Evolution_3._0
 
             X = xCell;
             Y = yCell;
-
+            prewX = X;
+            prewY = Y;
             group = carbon;
             range = 100;
-            stepLength = 10;
+            stepLength = 4;
             maxHp = 50 + 100 * carbon;
             hp = maxHp;
         }
@@ -42,7 +45,7 @@ namespace Evolution_3._0
             }
             set
             {
-                if (value < Block.widthField - Block.widthCell / Block.widthBlock && value >= 0)
+                if (value < Block.widthBlock * Block.widthField - Block.widthCell && value >= 0)
                     x = value;
             }
         }
@@ -55,39 +58,85 @@ namespace Evolution_3._0
             }
             set
             {
-                if (value < Block.heightField - Block.heightCell/Block.heightBlock && value >= 0)
+                if (value < Block.heightBlock * Block.heightField - Block.heightCell && value >= 0)
                     y = value;
             }
         }
 
-        public void Moving(char[,] array)
+
+        public void Moving(List<Food> Foods)
         {
-            // int moveX = rnd.Next(0, 2);
-            // moveX = moveX == 0 ? -1 : 1;
+            double prewHypotenuse = range + 1;
+            int catchFood = -1;
+            int countFood = 0;
+
             int moveX = rnd.Next(-1, 2);
             int moveY = rnd.Next(-1, 2);
-            // int moveY = rnd.Next(0, 2);
-            // moveY = moveY == 0 ? -1 : 1;
 
+             foreach (var f in Foods)
+             {
+                 double h = Y - f.Y;
+                 double w = X - f.X;
 
-            for (int y = Y ; y <= Y + Block.heightCell / Block.heightBlock; y++)
-            {
-                for (int x = X ; x <= X + Block.widthCell / Block.widthBlock; x++)
-                {
-                    array[x, y] = 'E';
-                }
-            }
-            X += moveX;
-            Y += moveY;
-            for (int y = Y ; y <= Y + Block.heightCell / Block.heightBlock; y++)
-            {
-                for (int x = X ; x <= X + Block.widthCell / Block.widthBlock; x++)
-                {
-                    array[x, y] = Convert.ToChar(group.ToString());
-                }
-            }
+                 double hypotenuse = Math.Sqrt(Math.Pow(h, 2) + Math.Pow(w, 2));
+
+                 if (hypotenuse <= range && hypotenuse < prewHypotenuse)
+                 {
+                     prewHypotenuse = hypotenuse;
+                     catchFood = countFood;
+
+                 }
+                 countFood++;
+             }
+
+             if (catchFood != -1)
+             {
+                 int time = (int)(prewHypotenuse / stepLength);
+                 int deltaX = Foods[catchFood].X - X ;
+                 int deltaY = Foods[catchFood].Y - Y;
+                 int stepX;
+                 int stepY;
+
+                 if (time == 0)
+                 {
+                     stepX = 0;
+                     stepY = 0;
+                 }
+                 else
+                 {
+                     stepX = deltaX / time;
+                     stepY = deltaY / time;
+                 }
+
+                X += stepX;
+                Y += stepY;
+                 if (deltaX == 0 && deltaY == 0)   //здесь клетка съедает еду
+                 {
+                    Foods[catchFood].isAlive = false;
+                    // Foods.Remove(Foods[catchFood]);
+
+                     int upHp = 10;
+                     maxHp += upHp;
+
+                     if (hp <= maxHp - upHp * 3)
+                         hp += upHp * 3;
+                     else
+                         hp = maxHp;
+                 }
+             }
+
+             else
+             {
+                 X += moveX * stepLength;
+                 Y += moveY * stepLength;
+             }
+
 
         }
 
     }
+
+
 }
+
+

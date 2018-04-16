@@ -15,8 +15,10 @@ namespace Evolution_3._0
     {
         char[,] Status = new char[Block.widthField, Block.heightField];
         char[,] PrewStatus = new char[Block.widthField, Block.heightField];
+
         static public Random rnd = new Random();
         List<Cells> ListCells = new List<Cells>();
+        List<Food> ListFoods = new List<Food>();
         DataTable dt = new DataTable();
         public Form1()
         {
@@ -75,9 +77,60 @@ namespace Evolution_3._0
 
         public void DrowAll()
         {
+
+
             SolidBrush myBrush = new SolidBrush(Color.Black);
             Pen myPen = new Pen(Color.Black, 2);
             Graphics g = CreateGraphics();
+
+
+
+           foreach (var c in ListCells)
+            {
+                if (c.X != c.prewX || c.Y != c.prewY)
+                {
+                    myBrush = new SolidBrush(Color.LightBlue);
+                    g.FillEllipse(myBrush, new Rectangle(c.prewX, c.prewY, Block.widthCell, Block.heightCell ));
+                    switch (c.group)
+                    {
+                        case 3:
+                            myBrush = new SolidBrush(Color.Green);
+                            break;
+                        case 4:
+                            myBrush = new SolidBrush(Color.CornflowerBlue);
+                            break;
+                        case 5:
+                            myBrush = new SolidBrush(Color.BlueViolet);
+                            break;
+                        case 6:
+                            myBrush = new SolidBrush(Color.Indigo);
+                            break;
+                        default:
+                            myBrush = new SolidBrush(Color.BlanchedAlmond);
+                            break;
+                    }
+                    g.FillEllipse(myBrush, new Rectangle(c.X, c.Y, Block.widthCell, Block.heightCell));
+                    c.prewX = c.X;
+                    c.prewY = c.Y;
+                }
+            }
+
+           foreach (var f in ListFoods)
+            {
+                if (f.isAlive)
+                {
+                    myBrush = new SolidBrush(Color.Red);
+                    g.FillRectangle(myBrush, new Rectangle(f.X, f.Y, Block.widthFood, Block.heightFood));
+                }
+
+                else
+                {
+                    myBrush = new SolidBrush(Color.LightBlue);
+                    g.FillRectangle(myBrush, new Rectangle(f.X, f.Y, Block.widthFood, Block.heightFood));
+
+                }
+            }
+
             for (int y = 0; y < Block.heightField; y++)
             {
                 for (int x = 0; x < Block.widthField; x++)
@@ -114,48 +167,13 @@ namespace Evolution_3._0
                                 myBrush = new SolidBrush(Color.Blue);
                                 g.FillRectangle(myBrush, new Rectangle(x * Block.widthBlock, y * Block.heightBlock, Block.widthBlock, Block.heightBlock));
                                 break;
-                            case '0':
-                                myBrush = new SolidBrush(Color.Pink);
-                                g.FillRectangle(myBrush, new Rectangle(x * Block.widthBlock, y * Block.heightBlock, Block.widthBlock, Block.heightBlock));
-
-                                //  g.DrawRectangle(myPen, new Rectangle(x * Block.widthBlock, y * Block.heightBlock, Block.widthBlock, Block.heightBlock));
-                                break;
-                            case '1':
-                                myBrush = new SolidBrush(Color.LightCoral);
-                                g.FillRectangle(myBrush, new Rectangle(x * Block.widthBlock, y * Block.heightBlock, Block.widthBlock, Block.heightBlock));
-                                //   g.DrawRectangle(myPen, new Rectangle(x * Block.widthBlock, y * Block.heightBlock, Block.widthBlock, Block.heightBlock));
-
-                                break;
-                            case '2':
-                                myBrush = new SolidBrush(Color.LightBlue);
-                                g.FillRectangle(myBrush, new Rectangle(x * Block.widthBlock, y * Block.heightBlock, Block.widthBlock, Block.heightBlock));
-                                // g.DrawRectangle(myPen, new Rectangle(x * Block.widthBlock, y * Block.heightBlock, Block.widthBlock, Block.heightBlock));
-                                break;
-                            case '3':
-                                myBrush = new SolidBrush(Color.DarkCyan);
-                                g.FillRectangle(myBrush, new Rectangle(x * Block.widthBlock, y * Block.heightBlock, Block.widthBlock, Block.heightBlock));
-                                // g.DrawRectangle(myPen, new Rectangle(x * Block.widthBlock, y * Block.heightBlock, Block.widthBlock, Block.heightBlock));
-                                break;
-                            case '4':
-                                myBrush = new SolidBrush(Color.Indigo);
-                                g.FillRectangle(myBrush, new Rectangle(x * Block.widthBlock, y * Block.heightBlock, Block.widthBlock, Block.heightBlock));
-                                //  g.DrawRectangle(myPen, new Rectangle(x * Block.widthBlock, y * Block.heightBlock, Block.widthBlock, Block.heightBlock));
-                                break;
-                            case '5':
-                                myBrush = new SolidBrush(Color.DarkGreen);
-                                g.FillRectangle(myBrush, new Rectangle(x * Block.widthBlock, y * Block.heightBlock, Block.widthBlock, Block.heightBlock));
-                                //g.DrawRectangle(myPen, new Rectangle(x * Block.widthBlock, y * Block.heightBlock, Block.widthBlock, Block.heightBlock));
-                                break;
-                            case '6':
-                                myBrush = new SolidBrush(Color.Black);
-                                g.FillRectangle(myBrush, new Rectangle(x * Block.widthBlock, y * Block.heightBlock, Block.widthBlock, Block.heightBlock));
-                                // g.DrawRectangle(myPen, new Rectangle(x * Block.widthBlock, y * Block.heightBlock, Block.widthBlock, Block.heightBlock));
-                                break;
+                           
                         }
                         PrewStatus[x, y] = Status[x, y];
                     }
                 }
             }
+
             myPen.Dispose();
             myBrush.Dispose();
             g.Dispose();
@@ -167,11 +185,7 @@ namespace Evolution_3._0
             timerTurn.Enabled = true;
         }
 
-        private void timerDraw_Tick(object sender, EventArgs e)
-        {
-            DrowAll();
-            // Invalidate();
-        }
+
 
 
         void CreateOrganic(int minHydrogen, int minCarbon, int minNytrogen, int minOxygen, int xCell, int yCell)
@@ -207,7 +221,7 @@ namespace Evolution_3._0
             if (hydrogen > minHydrogen && carbon > minCarbon && oxygen > minOxygen && nytrogen > minHydrogen)
             {
                 //create Cell
-                Cells c = new Cells(carbon, xCell - 1, yCell - 1);
+                Cells c = new Cells(carbon, xCell * Block.widthBlock, yCell * Block.heightBlock);
                 ListCells.Add(c);
 
                 DataRow r = dt.NewRow();
@@ -217,37 +231,22 @@ namespace Evolution_3._0
                 r["HP"] = c.hp;
                 dt.Rows.Add(r);
                 dataGridViewInfo.DataSource = dt;
-                //r.Delete();
-
-                for (int y = c.Y; y <= c.Y + Block.heightCell / Block.heightBlock; y++)
-                {
-                    for (int x = c.X; x <= c.X + Block.widthCell / Block.widthBlock; x++)
-                    {
-                        Status[x, y] = 'E';
-                    }
-                }
-
-                for (int y = c.Y; y <= c.Y + Block.heightCell / Block.heightBlock; y++)
-                {
-                    for (int x = c.X; x <= c.X + Block.widthCell / Block.widthBlock; x++)
-                    {
-                        Status[x, y] = Convert.ToChar(c.group.ToString());
-                    }
-                }
             }
 
-            else if (hydrogen >= minHydrogen && carbon >= minCarbon && oxygen >= minOxygen && nytrogen >= minNytrogen)
+            else if (hydrogen > minHydrogen && carbon > minCarbon && oxygen > minOxygen && nytrogen >= minNytrogen)
             {
                 //create Food
+                Food f = new Food(xCell * Block.widthBlock, yCell * Block.heightBlock);
+                ListFoods.Add(f);
             }
         }
 
         private void btn_create_Click(object sender, EventArgs e)
         {
 
-            for (int y = 2; y < Block.heightField - 2; y++)
+            for (int y = 2; y < Block.heightField - 4; y++)
             {
-                for (int x = 2; x < Block.widthField - 2; x++)
+                for (int x = 2; x < Block.widthField - 4; x++)
                 {
                     if (Status[x, y] == 'C')
                     {
@@ -260,7 +259,7 @@ namespace Evolution_3._0
             {
                 for (int x = 0; x < Block.widthField; x++)
                 {
-                    if (!char.IsDigit(Status[x, y]))
+                    if (Status[x, y] !='F')//(!char.IsDigit(Status[x, y]))
                     {
                         Status[x, y] = 'E';
                     }
@@ -269,11 +268,29 @@ namespace Evolution_3._0
 
         }
 
+        private void timerDraw_Tick(object sender, EventArgs e)
+        {
+            DrowAll();
+            // Invalidate();
+        }
+        private static bool DeadFood(Food foods) //предикат для работы с RemoveAll
+        {
+            if (!foods.isAlive)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
         private void timerTurn_Tick(object sender, EventArgs e)
         {
+            ListFoods.RemoveAll(DeadFood);
             foreach (var c in ListCells)
             {
-                c.Moving(Status);
+                c.Moving(ListFoods);
+
                 dt.AsEnumerable().Where(p => Convert.ToInt32(p["Id"]) == c.idCell).ToList().ForEach( //обновление таблицы
                     k =>
                     {
@@ -286,7 +303,10 @@ namespace Evolution_3._0
                     });
             }
 
+            
+
             labelCells.Text = ListCells.Count.ToString();
+            labelFoods.Text = ListFoods.Count.ToString();
         }
     }
 }
