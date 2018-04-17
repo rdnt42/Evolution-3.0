@@ -20,6 +20,7 @@ namespace Evolution_3._0
         List<Cells> ListCells = new List<Cells>();
         List<Food> ListFoods = new List<Food>();
         DataTable dt = new DataTable();
+        PictureBox map = new PictureBox();
         public Form1()
         {
             InitializeComponent();
@@ -34,6 +35,10 @@ namespace Evolution_3._0
             dt.Columns.Add("Group");
             dt.Columns.Add("HP");
             dt.Columns.Add("MaxHP");
+            /////////////BITMAP MY GAME/////////////////////////////////////////////////////////////////////
+            map.Size = new Size(Block.widthField * Block.widthBlock, Block.heightField * Block.heightBlock);
+            map.Location = new Point(0, 0);
+            this.Controls.Add(map);
         }
 
         private void btnGeneration_Click(object sender, EventArgs e)
@@ -75,6 +80,7 @@ namespace Evolution_3._0
             }
         }
 
+
         public void DrowAll()
         {
 
@@ -83,96 +89,106 @@ namespace Evolution_3._0
             Pen myPen = new Pen(Color.Black, 2);
             Graphics g = CreateGraphics();
 
+            int width = Block.widthField * Block.widthBlock;
+            int height = Block.heightField * Block.heightBlock;
+            //byte[,,] rgb = Rgb.GenerateBytePicture(width, height);
+            byte[,,] rgb = Rgb.Test(width, height);
+            Rgb.setX++;
+            Rgb.setY++;
+            // byte[,,] res = Rgb.BitmapToByteRgbQ(Rgb.RgbToBitmapQ(rgb));
+
+            Bitmap restored = Rgb.RgbToBitmapNaive(rgb);
+            map.Image = restored;
 
 
-           foreach (var c in ListCells)
-            {
-                if (c.X != c.prewX || c.Y != c.prewY)
-                {
-                    myBrush = new SolidBrush(Color.LightBlue);
-                    g.FillEllipse(myBrush, new Rectangle(c.prewX, c.prewY, Block.widthCell, Block.heightCell ));
-                    switch (c.group)
-                    {
-                        case 3:
-                            myBrush = new SolidBrush(Color.Green);
-                            break;
-                        case 4:
-                            myBrush = new SolidBrush(Color.CornflowerBlue);
-                            break;
-                        case 5:
-                            myBrush = new SolidBrush(Color.BlueViolet);
-                            break;
-                        case 6:
-                            myBrush = new SolidBrush(Color.Indigo);
-                            break;
-                        default:
-                            myBrush = new SolidBrush(Color.BlanchedAlmond);
-                            break;
-                    }
-                    g.FillEllipse(myBrush, new Rectangle(c.X, c.Y, Block.widthCell, Block.heightCell));
-                    c.prewX = c.X;
-                    c.prewY = c.Y;
-                }
-            }
+            /* foreach (var c in ListCells)
+              {
+                  if (c.X != c.prewX || c.Y != c.prewY)
+                  {
+                      myBrush = new SolidBrush(Color.LightBlue);
+                      g.FillEllipse(myBrush, new Rectangle(c.prewX, c.prewY, Block.widthCell, Block.heightCell ));
+                      switch (c.group)
+                      {
+                          case 3:
+                              myBrush = new SolidBrush(Color.Green);
+                              break;
+                          case 4:
+                              myBrush = new SolidBrush(Color.CornflowerBlue);
+                              break;
+                          case 5:
+                              myBrush = new SolidBrush(Color.BlueViolet);
+                              break;
+                          case 6:
+                              myBrush = new SolidBrush(Color.Indigo);
+                              break;
+                          default:
+                              myBrush = new SolidBrush(Color.BlanchedAlmond);
+                              break;
+                      }
+                      g.FillEllipse(myBrush, new Rectangle(c.X, c.Y, Block.widthCell, Block.heightCell));
+                      c.prewX = c.X;
+                      c.prewY = c.Y;
+                  }
+              }
 
-           foreach (var f in ListFoods)
-            {
-                if (f.isAlive)
-                {
-                    myBrush = new SolidBrush(Color.Red);
-                    g.FillRectangle(myBrush, new Rectangle(f.X, f.Y, Block.widthFood, Block.heightFood));
-                }
+             foreach (var f in ListFoods)
+              {
+                  if (f.isAlive)
+                  {
+                      myBrush = new SolidBrush(Color.Red);
+                      g.FillRectangle(myBrush, new Rectangle(f.X, f.Y, Block.widthFood, Block.heightFood));
+                  }
 
-                else
-                {
-                    myBrush = new SolidBrush(Color.LightBlue);
-                    g.FillRectangle(myBrush, new Rectangle(f.X, f.Y, Block.widthFood, Block.heightFood));
+                  else
+                  {
+                      myBrush = new SolidBrush(Color.LightBlue);
+                      g.FillRectangle(myBrush, new Rectangle(f.X, f.Y, Block.widthFood, Block.heightFood));
 
-                }
-            }
+                  }
+              }
 
-            for (int y = 0; y < Block.heightField; y++)
-            {
-                for (int x = 0; x < Block.widthField; x++)
-                {
-                    if (Status[x, y] != PrewStatus[x, y])
-                    {
-                        switch (Status[x, y])
-                        {
-                            case 'E':
-                                myBrush = new SolidBrush(Color.LightBlue);
-                                g.FillRectangle(myBrush, new Rectangle(x * Block.widthBlock, y * Block.heightBlock, Block.widthBlock, Block.heightBlock));
-                                break;
-                            case 'C':
-                                myBrush = new SolidBrush(Color.Yellow);
-                                g.FillRectangle(myBrush, new Rectangle(x * Block.widthBlock, y * Block.heightBlock, Block.widthBlock, Block.heightBlock));
-                                break;
-                            case 'N':
-                                myBrush = new SolidBrush(Color.Gray);
-                                g.FillRectangle(myBrush, new Rectangle(x * Block.widthBlock, y * Block.heightBlock, Block.widthBlock, Block.heightBlock));
-                                break;
-                            case 'H':
-                                myBrush = new SolidBrush(Color.Red);
-                                g.FillRectangle(myBrush, new Rectangle(x * Block.widthBlock, y * Block.heightBlock, Block.widthBlock, Block.heightBlock));
-                                break;
-                            case 'O':
-                                myBrush = new SolidBrush(Color.Orange);
-                                g.FillRectangle(myBrush, new Rectangle(x * Block.widthBlock, y * Block.heightBlock, Block.widthBlock, Block.heightBlock));
-                                break;
-                            case 'S':
-                                myBrush = new SolidBrush(Color.Black);
-                                g.FillRectangle(myBrush, new Rectangle(x * Block.widthBlock, y * Block.heightBlock, Block.widthBlock, Block.heightBlock));
-                                break;
-                            case 'P':
-                                myBrush = new SolidBrush(Color.Blue);
-                                g.FillRectangle(myBrush, new Rectangle(x * Block.widthBlock, y * Block.heightBlock, Block.widthBlock, Block.heightBlock));
-                                break;
-                           
-                        }
-                        PrewStatus[x, y] = Status[x, y];
-                    }
-                }
-            }
+              for (int y = 0; y < Block.heightField; y++)
+              {
+                  for (int x = 0; x < Block.widthField; x++)
+                  {
+                      if (Status[x, y] != PrewStatus[x, y])
+                      {
+                          switch (Status[x, y])
+                          {
+                              case 'E':
+                                  myBrush = new SolidBrush(Color.LightBlue);
+                                  g.FillRectangle(myBrush, new Rectangle(x * Block.widthBlock, y * Block.heightBlock, Block.widthBlock, Block.heightBlock));
+                                  break;
+                              case 'C':
+                                  myBrush = new SolidBrush(Color.Yellow);
+                                  g.FillRectangle(myBrush, new Rectangle(x * Block.widthBlock, y * Block.heightBlock, Block.widthBlock, Block.heightBlock));
+                                  break;
+                              case 'N':
+                                  myBrush = new SolidBrush(Color.Gray);
+                                  g.FillRectangle(myBrush, new Rectangle(x * Block.widthBlock, y * Block.heightBlock, Block.widthBlock, Block.heightBlock));
+                                  break;
+                              case 'H':
+                                  myBrush = new SolidBrush(Color.Red);
+                                  g.FillRectangle(myBrush, new Rectangle(x * Block.widthBlock, y * Block.heightBlock, Block.widthBlock, Block.heightBlock));
+                                  break;
+                              case 'O':
+                                  myBrush = new SolidBrush(Color.Orange);
+                                  g.FillRectangle(myBrush, new Rectangle(x * Block.widthBlock, y * Block.heightBlock, Block.widthBlock, Block.heightBlock));
+                                  break;
+                              case 'S':
+                                  myBrush = new SolidBrush(Color.Black);
+                                  g.FillRectangle(myBrush, new Rectangle(x * Block.widthBlock, y * Block.heightBlock, Block.widthBlock, Block.heightBlock));
+                                  break;
+                              case 'P':
+                                  myBrush = new SolidBrush(Color.Blue);
+                                  g.FillRectangle(myBrush, new Rectangle(x * Block.widthBlock, y * Block.heightBlock, Block.widthBlock, Block.heightBlock));
+                                  break;
+
+                          }
+                          PrewStatus[x, y] = Status[x, y];
+                      }
+                  }
+              }*/
 
             myPen.Dispose();
             myBrush.Dispose();

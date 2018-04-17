@@ -64,7 +64,6 @@
             // 
             // timerDraw
             // 
-            this.timerDraw.Interval = 15;
             this.timerDraw.Tick += new System.EventHandler(this.timerDraw_Tick);
             // 
             // btn_create
