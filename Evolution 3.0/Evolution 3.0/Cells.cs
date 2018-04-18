@@ -30,7 +30,10 @@ namespace Evolution_3._0
             Y = yCell;
             prewX = X;
             prewY = Y;
-            group = carbon;
+            if (group == 1)
+                group = rnd.Next(2, 6);
+            else
+                group = carbon;
             range = 100;
             stepLength = 2;
             maxHp = 50 + 100 * carbon;
@@ -73,70 +76,67 @@ namespace Evolution_3._0
             int moveX = rnd.Next(-1, 2);
             int moveY = rnd.Next(-1, 2);
 
-             foreach (var f in Foods)
-             {
-                 double h = Y - f.Y;
-                 double w = X - f.X;
+            foreach (var f in Foods)
+            {
+                double h = Y - f.Y;
+                double w = X - f.X;
 
-                 double hypotenuse = Math.Sqrt(Math.Pow(h, 2) + Math.Pow(w, 2));
+                double hypotenuse = Math.Sqrt(Math.Pow(h, 2) + Math.Pow(w, 2));
 
-                 if (hypotenuse <= range && hypotenuse < prewHypotenuse)
-                 {
-                     prewHypotenuse = hypotenuse;
-                     catchFood = countFood;
+                if (hypotenuse <= range && hypotenuse < prewHypotenuse)
+                {
+                    prewHypotenuse = hypotenuse;
+                    catchFood = countFood;
+                }
+                countFood++;
+            }
 
-                 }
-                 countFood++;
-             }
+            if (catchFood != -1)
+            {
+                int time = (int)(prewHypotenuse / stepLength);
+                int deltaX = Foods[catchFood].X - X;
+                int deltaY = Foods[catchFood].Y - Y;
+                int stepX;
+                int stepY;
 
-             if (catchFood != -1)
-             {
-                 int time = (int)(prewHypotenuse / stepLength);
-                 int deltaX = Foods[catchFood].X - X ;
-                 int deltaY = Foods[catchFood].Y - Y;
-                 int stepX;
-                 int stepY;
-
-                 if (time == 0)
-                 {
-                     stepX = 0;
-                     stepY = 0;
-                 }
-                 else
-                 {
-                     stepX = deltaX / time;
-                     stepY = deltaY / time;
-                 }
+                if (time == 0)
+                {
+                    stepX = 0;
+                    stepY = 0;
+                }
+                else
+                {
+                    stepX = deltaX / time;
+                    stepY = deltaY / time;
+                }
 
                 X += stepX;
                 Y += stepY;
-                 if (deltaX == 0 && deltaY == 0)   //здесь клетка съедает еду
-                 {
+                if (deltaX == 0 && deltaY == 0)   //здесь клетка съедает еду
+                {
                     Foods[catchFood].isAlive = false;
                     Foods.Remove(Foods[catchFood]);
 
-                     int upHp = 10;
-                     maxHp += upHp;
+                    int upHp = 10;
+                    maxHp += upHp;
 
-                     if (hp <= maxHp - upHp * 3)
-                         hp += upHp * 3;
-                     else
-                         hp = maxHp;
-                 }
-             }
+                    if (hp <= maxHp - upHp * 3)
+                        hp += upHp * 3;
+                    else
+                        hp = maxHp;
 
-             else
-             {
-                 X += moveX * stepLength;
-                 Y += moveY * stepLength;
-             }
+                    if (hp % 50 == 0)
+                        group++;
+                }
+            }
 
-
+            else
+            {
+                X += moveX * stepLength;
+                Y += moveY * stepLength;
+            }
         }
-
     }
-
-
 }
 
 

@@ -38,6 +38,9 @@
             this.dataGridViewInfo = new System.Windows.Forms.DataGridView();
             this.labelFoods = new System.Windows.Forms.Label();
             this.labelFoodShow = new System.Windows.Forms.Label();
+            this.buttonStart = new System.Windows.Forms.Button();
+            this.labelElements = new System.Windows.Forms.Label();
+            this.labelShowElem = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewInfo)).BeginInit();
             this.SuspendLayout();
             // 
@@ -58,7 +61,7 @@
             // 
             // btn_create
             // 
-            this.btn_create.Location = new System.Drawing.Point(1253, 113);
+            this.btn_create.Location = new System.Drawing.Point(1253, 62);
             this.btn_create.Name = "btn_create";
             this.btn_create.Size = new System.Drawing.Size(75, 23);
             this.btn_create.TabIndex = 2;
@@ -75,7 +78,7 @@
             // 
             this.labelCellsShow.AutoSize = true;
             this.labelCellsShow.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.labelCellsShow.Location = new System.Drawing.Point(1170, 23);
+            this.labelCellsShow.Location = new System.Drawing.Point(1165, 19);
             this.labelCellsShow.Name = "labelCellsShow";
             this.labelCellsShow.Size = new System.Drawing.Size(61, 26);
             this.labelCellsShow.TabIndex = 3;
@@ -85,7 +88,7 @@
             // 
             this.labelCells.AutoSize = true;
             this.labelCells.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.labelCells.Location = new System.Drawing.Point(1170, 58);
+            this.labelCells.Location = new System.Drawing.Point(1165, 54);
             this.labelCells.Name = "labelCells";
             this.labelCells.Size = new System.Drawing.Size(24, 26);
             this.labelCells.TabIndex = 4;
@@ -97,7 +100,7 @@
             this.dataGridViewInfo.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells;
             this.dataGridViewInfo.BackgroundColor = System.Drawing.SystemColors.ButtonFace;
             this.dataGridViewInfo.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridViewInfo.Location = new System.Drawing.Point(1080, 142);
+            this.dataGridViewInfo.Location = new System.Drawing.Point(1080, 189);
             this.dataGridViewInfo.Name = "dataGridViewInfo";
             this.dataGridViewInfo.Size = new System.Drawing.Size(260, 312);
             this.dataGridViewInfo.TabIndex = 9;
@@ -106,7 +109,7 @@
             // 
             this.labelFoods.AutoSize = true;
             this.labelFoods.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.labelFoods.Location = new System.Drawing.Point(1092, 58);
+            this.labelFoods.Location = new System.Drawing.Point(1087, 54);
             this.labelFoods.Name = "labelFoods";
             this.labelFoods.Size = new System.Drawing.Size(24, 26);
             this.labelFoods.TabIndex = 11;
@@ -116,17 +119,50 @@
             // 
             this.labelFoodShow.AutoSize = true;
             this.labelFoodShow.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.labelFoodShow.Location = new System.Drawing.Point(1092, 23);
+            this.labelFoodShow.Location = new System.Drawing.Point(1087, 19);
             this.labelFoodShow.Name = "labelFoodShow";
             this.labelFoodShow.Size = new System.Drawing.Size(72, 26);
             this.labelFoodShow.TabIndex = 10;
             this.labelFoodShow.Text = "Foods";
+            // 
+            // buttonStart
+            // 
+            this.buttonStart.Location = new System.Drawing.Point(1253, 103);
+            this.buttonStart.Name = "buttonStart";
+            this.buttonStart.Size = new System.Drawing.Size(75, 23);
+            this.buttonStart.TabIndex = 12;
+            this.buttonStart.Text = "start";
+            this.buttonStart.UseVisualStyleBackColor = true;
+            this.buttonStart.Click += new System.EventHandler(this.buttonStart_Click);
+            // 
+            // labelElements
+            // 
+            this.labelElements.AutoSize = true;
+            this.labelElements.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.labelElements.Location = new System.Drawing.Point(1087, 134);
+            this.labelElements.Name = "labelElements";
+            this.labelElements.Size = new System.Drawing.Size(24, 26);
+            this.labelElements.TabIndex = 14;
+            this.labelElements.Text = "0";
+            // 
+            // labelShowElem
+            // 
+            this.labelShowElem.AutoSize = true;
+            this.labelShowElem.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.labelShowElem.Location = new System.Drawing.Point(1087, 99);
+            this.labelShowElem.Name = "labelShowElem";
+            this.labelShowElem.Size = new System.Drawing.Size(104, 26);
+            this.labelShowElem.TabIndex = 13;
+            this.labelShowElem.Text = "Elements";
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1352, 661);
+            this.Controls.Add(this.labelElements);
+            this.Controls.Add(this.labelShowElem);
+            this.Controls.Add(this.buttonStart);
             this.Controls.Add(this.labelFoods);
             this.Controls.Add(this.labelFoodShow);
             this.Controls.Add(this.dataGridViewInfo);
@@ -154,6 +190,9 @@
         private System.Windows.Forms.DataGridView dataGridViewInfo;
         private System.Windows.Forms.Label labelFoods;
         private System.Windows.Forms.Label labelFoodShow;
+        private System.Windows.Forms.Button buttonStart;
+        private System.Windows.Forms.Label labelElements;
+        private System.Windows.Forms.Label labelShowElem;
     }
 }
 

@@ -17,20 +17,17 @@ namespace Evolution_3._0
         char[,] PrewStatus = new char[Block.widthField, Block.heightField];
         byte[,,] rgb = new byte[3, Block.heightField * Block.heightBlock, Block.widthField * Block.widthBlock];
         static public Random rnd = new Random();
+
         List<Cells> ListCells = new List<Cells>();
         List<Food> ListFoods = new List<Food>();
+        List<Block> ListElements = new List<Block>();
+
         DataTable dt = new DataTable();
         PictureBox map = new PictureBox();
         public Form1()
         {
             InitializeComponent();
-            for (int y = 0; y < Block.heightField; y++)
-            {
-                for (int x = 0; x < Block.widthField; x++)
-                {
-                    Status[x, y] = 'E';
-                }
-            }
+
             dt.Columns.Add("Id");
             dt.Columns.Add("Group");
             dt.Columns.Add("HP");
@@ -39,13 +36,6 @@ namespace Evolution_3._0
             map.Size = new Size(Block.widthField * Block.widthBlock, Block.heightField * Block.heightBlock);
             map.Location = new Point(0, 0);
             this.Controls.Add(map);
-            /*for (int y = 0; y < Block.heightField * Block.heightBlock-50; y++)
-                for (int x = 0; x < Block.widthField * Block.widthBlock-50; x++)
-                {
-                    rgb[0, y, x] = 255;
-                    rgb[1, y, x] = 255;
-                    rgb[2,y,x] = 255;
-                }*/
         }
 
         private void btnGeneration_Click(object sender, EventArgs e)
@@ -79,134 +69,20 @@ namespace Evolution_3._0
                             Status[x, y] = 'E';
                             break;
                     }
-                    //Block b = new Block();     // нам не нужны объекты, т.к. элементы можно задавать через статусы
-                    // b.x = x * Block.widthBlock;
-                    // b.y = y * Block.heightBlock;
-
                 }
             }
-            timerDraw.Enabled = true;
-            timerTurn.Enabled = true;
+            PrintElement();
+            DrowAll();
         }
 
 
         public void DrowAll()
         {
-
-
-            // SolidBrush myBrush = new SolidBrush(Color.Black);
-            //Pen myPen = new Pen(Color.Black, 2);
             Graphics g = CreateGraphics();
-
-
-            //byte[,,] rgb = Rgb.GenerateBytePicture(width, height);
-            // byte[,,] rgb = Rgb.Test(width, height);
-            //Rgb.setX++;
-            //Rgb.setY++;
-
             Bitmap restored = Rgb.RgbToBitmapQ(rgb); //Rgb.RgbToBitmapNaive(rgb);
             map.Image = restored;
-
-            /* foreach (var c in ListCells)
-              {
-                  if (c.X != c.prewX || c.Y != c.prewY)
-                  {
-                      myBrush = new SolidBrush(Color.LightBlue);
-                      g.FillEllipse(myBrush, new Rectangle(c.prewX, c.prewY, Block.widthCell, Block.heightCell ));
-                      switch (c.group)
-                      {
-                          case 3:
-                              myBrush = new SolidBrush(Color.Green);
-                              break;
-                          case 4:
-                              myBrush = new SolidBrush(Color.CornflowerBlue);
-                              break;
-                          case 5:
-                              myBrush = new SolidBrush(Color.BlueViolet);
-                              break;
-                          case 6:
-                              myBrush = new SolidBrush(Color.Indigo);
-                              break;
-                          default:
-                              myBrush = new SolidBrush(Color.BlanchedAlmond);
-                              break;
-                      }
-                      g.FillEllipse(myBrush, new Rectangle(c.X, c.Y, Block.widthCell, Block.heightCell));
-                      c.prewX = c.X;
-                      c.prewY = c.Y;
-                  }
-              }
-
-             foreach (var f in ListFoods)
-              {
-                  if (f.isAlive)
-                  {
-                      myBrush = new SolidBrush(Color.Red);
-                      g.FillRectangle(myBrush, new Rectangle(f.X, f.Y, Block.widthFood, Block.heightFood));
-                  }
-
-                  else
-                  {
-                      myBrush = new SolidBrush(Color.LightBlue);
-                      g.FillRectangle(myBrush, new Rectangle(f.X, f.Y, Block.widthFood, Block.heightFood));
-
-                  }
-              }
-
-              for (int y = 0; y < Block.heightField; y++)
-              {
-                  for (int x = 0; x < Block.widthField; x++)
-                  {
-                      if (Status[x, y] != PrewStatus[x, y])
-                      {
-                          switch (Status[x, y])
-                          {
-                              case 'E':
-                                  myBrush = new SolidBrush(Color.LightBlue);
-                                  g.FillRectangle(myBrush, new Rectangle(x * Block.widthBlock, y * Block.heightBlock, Block.widthBlock, Block.heightBlock));
-                                  break;
-                              case 'C':
-                                  myBrush = new SolidBrush(Color.Yellow);
-                                  g.FillRectangle(myBrush, new Rectangle(x * Block.widthBlock, y * Block.heightBlock, Block.widthBlock, Block.heightBlock));
-                                  break;
-                              case 'N':
-                                  myBrush = new SolidBrush(Color.Gray);
-                                  g.FillRectangle(myBrush, new Rectangle(x * Block.widthBlock, y * Block.heightBlock, Block.widthBlock, Block.heightBlock));
-                                  break;
-                              case 'H':
-                                  myBrush = new SolidBrush(Color.Red);
-                                  g.FillRectangle(myBrush, new Rectangle(x * Block.widthBlock, y * Block.heightBlock, Block.widthBlock, Block.heightBlock));
-                                  break;
-                              case 'O':
-                                  myBrush = new SolidBrush(Color.Orange);
-                                  g.FillRectangle(myBrush, new Rectangle(x * Block.widthBlock, y * Block.heightBlock, Block.widthBlock, Block.heightBlock));
-                                  break;
-                              case 'S':
-                                  myBrush = new SolidBrush(Color.Black);
-                                  g.FillRectangle(myBrush, new Rectangle(x * Block.widthBlock, y * Block.heightBlock, Block.widthBlock, Block.heightBlock));
-                                  break;
-                              case 'P':
-                                  myBrush = new SolidBrush(Color.Blue);
-                                  g.FillRectangle(myBrush, new Rectangle(x * Block.widthBlock, y * Block.heightBlock, Block.widthBlock, Block.heightBlock));
-                                  break;
-
-                          }
-                          PrewStatus[x, y] = Status[x, y];
-                      }
-                  }
-              }*/
-
-            // myPen.Dispose();
-            // myBrush.Dispose();
             g.Dispose();
         }
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-        }
-
-
-
 
         void CreateOrganic(int minHydrogen, int minCarbon, int minNytrogen, int minOxygen, int xCell, int yCell)
         {
@@ -221,7 +97,6 @@ namespace Evolution_3._0
                 {
                     switch (Status[x, y])
                     {
-
                         case 'H':
                             hydrogen++;
                             break;
@@ -244,6 +119,10 @@ namespace Evolution_3._0
                 Cells c = new Cells(carbon, xCell * Block.widthBlock, yCell * Block.heightBlock);
                 ListCells.Add(c);
 
+                for (int y = yCell - 2; y <= yCell + 2; y++)
+                    for (int x = xCell - 2; x <= xCell + 2; x++)
+                        Status[x, y] = 'E';
+
                 DataRow r = dt.NewRow();
                 r["Id"] = c.idCell;
                 r["Group"] = c.group;
@@ -258,15 +137,19 @@ namespace Evolution_3._0
                 //create Food
                 Food f = new Food(xCell * Block.widthBlock, yCell * Block.heightBlock);
                 ListFoods.Add(f);
+
+                for (int y = yCell - 2; y <= yCell + 2; y++)
+                    for (int x = xCell - 2; x <= xCell + 2; x++)
+                        Status[x, y] = 'E';
             }
         }
 
         private void btn_create_Click(object sender, EventArgs e)
         {
             /////////////////////////здесь заполнение массива карты
-            for (int y = 2; y < Block.heightField - 4; y++)
+            for (int y = 2; y < Block.heightField - 2; y++)
             {
-                for (int x = 2; x < Block.widthField - 4; x++)
+                for (int x = 2; x < Block.widthField - 2; x++)
                 {
                     if (Status[x, y] == 'C')
                     {
@@ -286,16 +169,22 @@ namespace Evolution_3._0
                 }
             }
 
+            PrintElement();
+            foreach (var c in ListCells)
+                PrintCell(c);
+            foreach (var f in ListFoods)
+                PrintFood(f);
+            DrowAll();
+
         }
 
         private void timerDraw_Tick(object sender, EventArgs e)
         {
             DrowAll();
-            // Invalidate();
         }
-        private static bool DeadFood(Food foods) //предикат для работы с RemoveAll
+        private static bool DeadElement(Block element) //предикат для работы с RemoveAll
         {
-            if (!foods.isAlive)
+            if (element.age>400)
             {
                 return true;
             }
@@ -306,8 +195,17 @@ namespace Evolution_3._0
         }
         private void timerTurn_Tick(object sender, EventArgs e)
         {
+            foreach (var el in ListElements)
+            {
+                el.age++;
+                if (el.age > 400)
+                    Status[el.X, el.Y] = 'E';
+            }
+
+            GenerationElement();
+
             PrintElement();
-            // ListFoods.RemoveAll(DeadFood);
+
             foreach (var f in ListFoods)
             {
                 PrintFood(f);
@@ -316,6 +214,7 @@ namespace Evolution_3._0
             foreach (var c in ListCells)
             {
                 c.Moving(ListFoods);
+
                 PrintCell(c);
 
                 dt.AsEnumerable().Where(p => Convert.ToInt32(p["Id"]) == c.idCell).ToList().ForEach( //обновление таблицы
@@ -330,11 +229,10 @@ namespace Evolution_3._0
                     });
             }
 
-
-
-
+            ListElements.RemoveAll(DeadElement);
             labelCells.Text = ListCells.Count.ToString();
             labelFoods.Text = ListFoods.Count.ToString();
+            labelElements.Text = ListElements.Count.ToString();
         }
 
 
@@ -343,9 +241,42 @@ namespace Evolution_3._0
             for (int y = 0; y < Block.heightCell; y++)
                 for (int x = 0; x < Block.widthCell; x++)
                 {
-                    rgb[0, c.Y + y, c.X + x] = 75;
-                    rgb[1, c.Y + y, c.X + x] = 0;
-                    rgb[2, c.Y + y, c.X + x] = 130;
+                    byte r = 0, g = 0, b = 0;
+                    switch (c.group)
+                    {
+                        case 2:
+                            r = 255; g = 228; b = 225;
+                            break;
+                        case 3:
+                            r = 189; g = 183; b = 107;
+                            break;
+                        case 4:
+                            r = 255; g = 255; b = 0;
+                            break;
+                        case 5:
+                            r = 75; g = 0; b = 130;
+                            break;
+                        case 6:
+                            r = 255; g = 0; b = 255;
+                            break;
+                        case 7:
+                            r = 128; g = 0; b = 128;
+                            break;
+
+                        case 8:
+                            r = 0; g = 0; b = 128;
+                            break;
+                        case 9:
+                            r = 47; g = 79; b = 79;
+                            break;
+
+                        default:
+                            r = 0; g = 255; b = 0;
+                            break;
+                    }
+                    rgb[0, c.Y + y, c.X + x] = r;
+                    rgb[1, c.Y + y, c.X + x] = g;
+                    rgb[2, c.Y + y, c.X + x] = b;
                 }
         }
 
@@ -362,7 +293,7 @@ namespace Evolution_3._0
 
         void PrintElement()
         {
-            byte r=0, g=0, b=0;
+            byte r = 0, g = 0, b = 0;
             for (int y = 0; y < Block.heightField; y++)
             {
                 for (int x = 0; x < Block.widthField; x++)
@@ -370,52 +301,62 @@ namespace Evolution_3._0
                     switch (Status[x, y])
                     {
                         case 'E':
-                            r = 173;
-                            g = 216;
-                            b = 230;
+                            r = 173; g = 216; b = 230;
                             break;
                         case 'C':
-                            r = 255;
-                            g = 104;
-                            b = 0;
+                            r = 255; g = 104; b = 0;
                             break;
                         case 'N':
-                            r = 0;
-                            g = 184;
-                            b = 217;
+                            r = 0; g = 184; b = 217;
                             break;
                         case 'H':
-                            r = 138;
-                            g = 127;
-                            b = 128;
+                            r = 138; g = 127; b = 128;
                             break;
                         case 'O':
-                            r = 173;
-                            g = 216;
-                            b = 230;
+                            r = 173; g = 216; b = 230;
                             break;
                         case 'S':
-                            r = 143;
-                            g = 254;
-                            b = 9;
+                            r = 143; g = 254; b = 9;
                             break;
                         case 'P':
-                            r = 10;
-                            g = 10;
-                            b = 10;
+                            r = 10; g = 10; b = 10;
                             break;
-
                     }
-                    for (int h = 0; h<Block.heightBlock;h++)
-                        for (int w = 0; w<Block.widthBlock;w++)
+
+                    for (int h = 0; h < Block.heightBlock; h++)
+                        for (int w = 0; w < Block.widthBlock; w++)
                         {
-                            rgb[0, Block.heightBlock * y +h, Block.widthBlock * x+w] = r;
+                            rgb[0, Block.heightBlock * y + h, Block.widthBlock * x + w] = r;
                             rgb[1, Block.heightBlock * y + h, Block.widthBlock * x + w] = g;
                             rgb[2, Block.heightBlock * y + h, Block.widthBlock * x + w] = b;
                         }
-
                 }
             }
+        }
+
+        void GenerationElement()
+        {
+            int x;
+            int y;
+            for (int i = 0; i < rnd.Next(1, 6); i++)
+            {
+                x = rnd.Next(2,Block.widthField-2);
+                y = rnd.Next(2,Block.heightField-2);
+
+                if (Status[x, y] == 'E')
+                {
+                    Block element = new Block(6,x,y);
+                    ListElements.Add(element);
+                    Status[x, y] = element.status;
+                    CreateOrganic(0, 0, 0, 1, x, y);
+                }
+            }
+        }
+
+        private void buttonStart_Click(object sender, EventArgs e)
+        {
+            timerDraw.Enabled = true;
+            timerTurn.Enabled = true;
         }
     }
 }
