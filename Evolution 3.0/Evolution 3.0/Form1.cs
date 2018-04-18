@@ -15,7 +15,7 @@ namespace Evolution_3._0
     {
         char[,] Status = new char[Block.widthField, Block.heightField];
         char[,] PrewStatus = new char[Block.widthField, Block.heightField];
-
+        byte[,,] rgb;
         static public Random rnd = new Random();
         List<Cells> ListCells = new List<Cells>();
         List<Food> ListFoods = new List<Food>();
@@ -80,25 +80,28 @@ namespace Evolution_3._0
             }
         }
 
+        int width = Block.widthField * Block.widthBlock;
+        int height = Block.heightField * Block.heightBlock;
 
         public void DrowAll()
         {
 
 
-            SolidBrush myBrush = new SolidBrush(Color.Black);
-            Pen myPen = new Pen(Color.Black, 2);
+            // SolidBrush myBrush = new SolidBrush(Color.Black);
+            //Pen myPen = new Pen(Color.Black, 2);
             Graphics g = CreateGraphics();
 
-            int width = Block.widthField * Block.widthBlock;
-            int height = Block.heightField * Block.heightBlock;
-            //byte[,,] rgb = Rgb.GenerateBytePicture(width, height);
-            byte[,,] rgb = Rgb.Test(width, height);
-            Rgb.setX++;
-            Rgb.setY++;
-            // byte[,,] res = Rgb.BitmapToByteRgbQ(Rgb.RgbToBitmapQ(rgb));
 
-            Bitmap restored = Rgb.RgbToBitmapNaive(rgb);
+            //byte[,,] rgb = Rgb.GenerateBytePicture(width, height);
+            // byte[,,] rgb = Rgb.Test(width, height);
+            //Rgb.setX++;
+            //Rgb.setY++;
+
+            Bitmap restored = Rgb.RgbToBitmapQ(rgb); //Rgb.RgbToBitmapNaive(rgb);
             map.Image = restored;
+
+
+
 
 
             /* foreach (var c in ListCells)
@@ -190,8 +193,8 @@ namespace Evolution_3._0
                   }
               }*/
 
-            myPen.Dispose();
-            myBrush.Dispose();
+            // myPen.Dispose();
+            // myBrush.Dispose();
             g.Dispose();
         }
 
@@ -259,7 +262,7 @@ namespace Evolution_3._0
 
         private void btn_create_Click(object sender, EventArgs e)
         {
-
+            /////////////////////////здесь заполнение массива карты
             for (int y = 2; y < Block.heightField - 4; y++)
             {
                 for (int x = 2; x < Block.widthField - 4; x++)
@@ -275,7 +278,7 @@ namespace Evolution_3._0
             {
                 for (int x = 0; x < Block.widthField; x++)
                 {
-                    if (Status[x, y] !='F')//(!char.IsDigit(Status[x, y]))
+                    if (Status[x, y] != 'F')//(!char.IsDigit(Status[x, y]))
                     {
                         Status[x, y] = 'E';
                     }
@@ -306,6 +309,13 @@ namespace Evolution_3._0
             foreach (var c in ListCells)
             {
                 c.Moving(ListFoods);
+                    for (int y = 0; y < Block.heightCell; y++)
+                        for (int x = 0; x < Block.widthCell; x++)
+                        {
+                        rgb[0, c.X + x, c.Y + y] = 100;
+                        rgb[1, c.X + x, c.Y + y] = 200;
+                        rgb[2, c.X + x, c.Y + y] = 0;
+                    }
 
                 dt.AsEnumerable().Where(p => Convert.ToInt32(p["Id"]) == c.idCell).ToList().ForEach( //обновление таблицы
                     k =>
@@ -319,7 +329,7 @@ namespace Evolution_3._0
                     });
             }
 
-            
+
 
             labelCells.Text = ListCells.Count.ToString();
             labelFoods.Text = ListFoods.Count.ToString();
