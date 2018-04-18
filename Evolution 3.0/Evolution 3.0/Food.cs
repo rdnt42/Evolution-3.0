@@ -34,8 +34,10 @@ namespace Evolution_3._0
             }
             set
             {
-                if (value < Block.widthBlock * Block.widthField - Block.widthFood+1 && value >= 0)
+                if (value < Block.widthBlock * Block.widthField - Block.widthFood && value >= 0)
                     x = value;
+                else if (value > Block.widthBlock * Block.widthField - Block.widthFood)
+                    x = Block.widthBlock * Block.widthField - Block.widthFood - 15;
             }
         }
 
@@ -47,8 +49,10 @@ namespace Evolution_3._0
             }
             set
             {
-                if (value < Block.heightBlock * Block.heightField - Block.heightFood+1 && value >= 0)
+                if (value < Block.heightBlock * Block.heightField - Block.heightFood && value >= 0)
                     y = value;
+                else if (value > Block.heightBlock * Block.heightField - Block.heightFood)
+                    y = Block.heightBlock * Block.heightField - Block.heightFood - 15;
             }
         }
     }

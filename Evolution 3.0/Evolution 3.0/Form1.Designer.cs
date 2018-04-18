@@ -30,7 +30,6 @@
         {
             this.components = new System.ComponentModel.Container();
             this.btnGeneration = new System.Windows.Forms.Button();
-            this.btn_start = new System.Windows.Forms.Button();
             this.timerDraw = new System.Windows.Forms.Timer(this.components);
             this.btn_create = new System.Windows.Forms.Button();
             this.timerTurn = new System.Windows.Forms.Timer(this.components);
@@ -52,16 +51,6 @@
             this.btnGeneration.UseVisualStyleBackColor = true;
             this.btnGeneration.Click += new System.EventHandler(this.btnGeneration_Click);
             // 
-            // btn_start
-            // 
-            this.btn_start.Location = new System.Drawing.Point(1253, 72);
-            this.btn_start.Name = "btn_start";
-            this.btn_start.Size = new System.Drawing.Size(75, 23);
-            this.btn_start.TabIndex = 1;
-            this.btn_start.Text = "start";
-            this.btn_start.UseVisualStyleBackColor = true;
-            this.btn_start.Click += new System.EventHandler(this.button1_Click);
-            // 
             // timerDraw
             // 
             this.timerDraw.Interval = 15;
@@ -79,7 +68,7 @@
             // 
             // timerTurn
             // 
-            this.timerTurn.Interval = 50;
+            this.timerTurn.Interval = 25;
             this.timerTurn.Tick += new System.EventHandler(this.timerTurn_Tick);
             // 
             // labelCellsShow
@@ -144,7 +133,6 @@
             this.Controls.Add(this.labelCells);
             this.Controls.Add(this.labelCellsShow);
             this.Controls.Add(this.btn_create);
-            this.Controls.Add(this.btn_start);
             this.Controls.Add(this.btnGeneration);
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
@@ -158,7 +146,6 @@
         #endregion
 
         private System.Windows.Forms.Button btnGeneration;
-        private System.Windows.Forms.Button btn_start;
         private System.Windows.Forms.Timer timerDraw;
         private System.Windows.Forms.Button btn_create;
         private System.Windows.Forms.Timer timerTurn;

@@ -32,7 +32,7 @@ namespace Evolution_3._0
             prewY = Y;
             group = carbon;
             range = 100;
-            stepLength = 4;
+            stepLength = 2;
             maxHp = 50 + 100 * carbon;
             hp = maxHp;
         }
@@ -113,7 +113,7 @@ namespace Evolution_3._0
                  if (deltaX == 0 && deltaY == 0)   //здесь клетка съедает еду
                  {
                     Foods[catchFood].isAlive = false;
-                    // Foods.Remove(Foods[catchFood]);
+                    Foods.Remove(Foods[catchFood]);
 
                      int upHp = 10;
                      maxHp += upHp;

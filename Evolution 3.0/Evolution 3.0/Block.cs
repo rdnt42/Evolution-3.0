@@ -25,8 +25,8 @@ namespace Evolution_3._0
         public static int countBlocks = widthField * heightField;
         public static int heightBlock = 5;
         public static int widthBlock = 5;
-        public static int heightFood = heightBlock * 3;
-        public static int widthFood = widthBlock * 3;
+        public static int heightFood = heightBlock * 4;
+        public static int widthFood = widthBlock * 4;
         public static int heightCell = heightBlock * 6;
         public static int widthCell = widthBlock * 6;
 

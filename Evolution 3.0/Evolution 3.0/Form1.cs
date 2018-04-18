@@ -15,7 +15,7 @@ namespace Evolution_3._0
     {
         char[,] Status = new char[Block.widthField, Block.heightField];
         char[,] PrewStatus = new char[Block.widthField, Block.heightField];
-        byte[,,] rgb;
+        byte[,,] rgb = new byte[3, Block.heightField * Block.heightBlock, Block.widthField * Block.widthBlock];
         static public Random rnd = new Random();
         List<Cells> ListCells = new List<Cells>();
         List<Food> ListFoods = new List<Food>();
@@ -39,6 +39,13 @@ namespace Evolution_3._0
             map.Size = new Size(Block.widthField * Block.widthBlock, Block.heightField * Block.heightBlock);
             map.Location = new Point(0, 0);
             this.Controls.Add(map);
+            /*for (int y = 0; y < Block.heightField * Block.heightBlock-50; y++)
+                for (int x = 0; x < Block.widthField * Block.widthBlock-50; x++)
+                {
+                    rgb[0, y, x] = 255;
+                    rgb[1, y, x] = 255;
+                    rgb[2,y,x] = 255;
+                }*/
         }
 
         private void btnGeneration_Click(object sender, EventArgs e)
@@ -78,10 +85,10 @@ namespace Evolution_3._0
 
                 }
             }
+            timerDraw.Enabled = true;
+            timerTurn.Enabled = true;
         }
 
-        int width = Block.widthField * Block.widthBlock;
-        int height = Block.heightField * Block.heightBlock;
 
         public void DrowAll()
         {
@@ -99,10 +106,6 @@ namespace Evolution_3._0
 
             Bitmap restored = Rgb.RgbToBitmapQ(rgb); //Rgb.RgbToBitmapNaive(rgb);
             map.Image = restored;
-
-
-
-
 
             /* foreach (var c in ListCells)
               {
@@ -200,8 +203,6 @@ namespace Evolution_3._0
 
         private void button1_Click(object sender, EventArgs e)
         {
-            timerDraw.Enabled = true;
-            timerTurn.Enabled = true;
         }
 
 
@@ -305,17 +306,17 @@ namespace Evolution_3._0
         }
         private void timerTurn_Tick(object sender, EventArgs e)
         {
-            ListFoods.RemoveAll(DeadFood);
+            PrintElement();
+            // ListFoods.RemoveAll(DeadFood);
+            foreach (var f in ListFoods)
+            {
+                PrintFood(f);
+            }
+
             foreach (var c in ListCells)
             {
                 c.Moving(ListFoods);
-                    for (int y = 0; y < Block.heightCell; y++)
-                        for (int x = 0; x < Block.widthCell; x++)
-                        {
-                        rgb[0, c.X + x, c.Y + y] = 100;
-                        rgb[1, c.X + x, c.Y + y] = 200;
-                        rgb[2, c.X + x, c.Y + y] = 0;
-                    }
+                PrintCell(c);
 
                 dt.AsEnumerable().Where(p => Convert.ToInt32(p["Id"]) == c.idCell).ToList().ForEach( //обновление таблицы
                     k =>
@@ -331,8 +332,90 @@ namespace Evolution_3._0
 
 
 
+
             labelCells.Text = ListCells.Count.ToString();
             labelFoods.Text = ListFoods.Count.ToString();
+        }
+
+
+        void PrintCell(Cells c)
+        {
+            for (int y = 0; y < Block.heightCell; y++)
+                for (int x = 0; x < Block.widthCell; x++)
+                {
+                    rgb[0, c.Y + y, c.X + x] = 75;
+                    rgb[1, c.Y + y, c.X + x] = 0;
+                    rgb[2, c.Y + y, c.X + x] = 130;
+                }
+        }
+
+        void PrintFood(Food f)
+        {
+            for (int y = 0; y < Block.heightFood; y++)
+                for (int x = 0; x < Block.widthFood; x++)
+                {
+                    rgb[0, f.Y + y, f.X + x] = 255;
+                    rgb[1, f.Y + y, f.X + x] = 0;
+                    rgb[2, f.Y + y, f.X + x] = 0;
+                }
+        }
+
+        void PrintElement()
+        {
+            byte r=0, g=0, b=0;
+            for (int y = 0; y < Block.heightField; y++)
+            {
+                for (int x = 0; x < Block.widthField; x++)
+                {
+                    switch (Status[x, y])
+                    {
+                        case 'E':
+                            r = 173;
+                            g = 216;
+                            b = 230;
+                            break;
+                        case 'C':
+                            r = 255;
+                            g = 104;
+                            b = 0;
+                            break;
+                        case 'N':
+                            r = 0;
+                            g = 184;
+                            b = 217;
+                            break;
+                        case 'H':
+                            r = 138;
+                            g = 127;
+                            b = 128;
+                            break;
+                        case 'O':
+                            r = 173;
+                            g = 216;
+                            b = 230;
+                            break;
+                        case 'S':
+                            r = 143;
+                            g = 254;
+                            b = 9;
+                            break;
+                        case 'P':
+                            r = 10;
+                            g = 10;
+                            b = 10;
+                            break;
+
+                    }
+                    for (int h = 0; h<Block.heightBlock;h++)
+                        for (int w = 0; w<Block.widthBlock;w++)
+                        {
+                            rgb[0, Block.heightBlock * y +h, Block.widthBlock * x+w] = r;
+                            rgb[1, Block.heightBlock * y + h, Block.widthBlock * x + w] = g;
+                            rgb[2, Block.heightBlock * y + h, Block.widthBlock * x + w] = b;
+                        }
+
+                }
+            }
         }
     }
 }
