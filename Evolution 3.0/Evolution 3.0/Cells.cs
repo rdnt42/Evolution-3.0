@@ -30,15 +30,17 @@ namespace Evolution_3._0
             Y = yCell;
             prewX = X;
             prewY = Y;
-            if (group == 1)
+            if (carbon == 1)
                 group = rnd.Next(2, 6);
             else
                 group = carbon;
             range = 100;
             stepLength = 2;
-            maxHp = 50 + 100 * carbon;
+            maxHp = 50 + 100 * group;
             hp = maxHp;
         }
+
+
 
         public new int X
         {

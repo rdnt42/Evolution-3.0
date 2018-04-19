@@ -21,6 +21,7 @@ namespace Evolution_3._0
         List<Cells> ListCells = new List<Cells>();
         List<Food> ListFoods = new List<Food>();
         List<Block> ListElements = new List<Block>();
+        DateTime timeStart;
 
         DataTable dt = new DataTable();
         PictureBox map = new PictureBox();
@@ -132,7 +133,7 @@ namespace Evolution_3._0
                 dataGridViewInfo.DataSource = dt;
             }
 
-            else if (hydrogen > minHydrogen && carbon > minCarbon && oxygen > minOxygen && nytrogen >= minNytrogen)
+            else if (hydrogen > minHydrogen && carbon > minCarbon)// && oxygen > minOxygen && nytrogen >= minNytrogen)
             {
                 //create Food
                 Food f = new Food(xCell * Block.widthBlock, yCell * Block.heightBlock);
@@ -184,7 +185,7 @@ namespace Evolution_3._0
         }
         private static bool DeadElement(Block element) //предикат для работы с RemoveAll
         {
-            if (element.age>400)
+            if (element.age > 400)
             {
                 return true;
             }
@@ -226,13 +227,47 @@ namespace Evolution_3._0
                             k["MaxHP"] = c.maxHp;
                             k.EndEdit();
                         }
+                        if (Convert.ToInt32(k["HP"]) != c.hp)
+                        {
+                            k.BeginEdit();
+                            k["HP"] = c.hp;
+                            k.EndEdit();
+                        }
+                        if (Convert.ToInt32(k["Group"]) != c.group)
+                        {
+                            k.BeginEdit();
+                            k["Group"] = c.group;
+                            k.EndEdit();
+                        }
                     });
+
+            }
+            foreach (var cBorn in ListCells)
+            {
+                if (cBorn.maxHp > 800 && cBorn.hp > 600)
+                {
+                    cBorn.maxHp /= 2;
+                    cBorn.hp /= 2;
+                    cBorn.group /= 2;
+                    cBorn.X -= Block.widthCell;
+                    Cells cell = new Cells(cBorn.group, cBorn.X + Block.widthCell, cBorn.Y);
+                    ListCells.Add(cell);
+                    DataRow r = dt.NewRow();
+                    r["Id"] = cell.idCell;
+                    r["Group"] = cell.group;
+                    r["MaxHP"] = cell.maxHp;
+                    r["HP"] = cell.hp;
+                    dt.Rows.Add(r);
+                    dataGridViewInfo.DataSource = dt;
+                    break;
+                }
             }
 
             ListElements.RemoveAll(DeadElement);
             labelCells.Text = ListCells.Count.ToString();
             labelFoods.Text = ListFoods.Count.ToString();
             labelElements.Text = ListElements.Count.ToString();
+            labelTime.Text = (DateTime.Now - timeStart).ToString().Substring(0, 8);
         }
 
 
@@ -269,14 +304,118 @@ namespace Evolution_3._0
                         case 9:
                             r = 47; g = 79; b = 79;
                             break;
-
-                        default:
+                        case 10:
                             r = 0; g = 255; b = 0;
+                            break;
+                        default:
+                            r = 0; g = 0; b = 0;
                             break;
                     }
                     rgb[0, c.Y + y, c.X + x] = r;
                     rgb[1, c.Y + y, c.X + x] = g;
                     rgb[2, c.Y + y, c.X + x] = b;
+
+                    if (x < 2 || x >= Block.widthCell - 2 || y < 2 || y >= Block.heightCell - 2)
+                    {
+                        rgb[0, c.Y + y, c.X + x] = 0;
+                        rgb[1, c.Y + y, c.X + x] = 0;
+                        rgb[2, c.Y + y, c.X + x] = 0;
+                    }
+                    else
+                    {
+                        switch (c.group)
+                        {
+                            case 1:
+                                if ((x == 15 && y > 5 && y < 25) || (x > 10 && x < 15 && y > 5 && y < 15 && x + y == 20))
+                                {
+                                    rgb[0, c.Y + y, c.X + x] = 0;
+                                    rgb[1, c.Y + y, c.X + x] = 0;
+                                    rgb[2, c.Y + y, c.X + x] = 0;
+                                }
+                                break;
+                            case 2:
+                                if ((x == 10 && y > 15 && y < 25) || (x == 15 && y > 5 && y < 15) || (y == 5 && x > 10 && x < 15) || (y == 15 && x > 10 && x < 15) || (y == 25 && x >= 10 && x < 15))
+                                {
+                                    rgb[0, c.Y + y, c.X + x] = 0;
+                                    rgb[1, c.Y + y, c.X + x] = 0;
+                                    rgb[2, c.Y + y, c.X + x] = 0;
+                                }
+                                break;
+                            case 3:
+                                if ((x == 15 && y > 5 && y < 25) || (y == 5 && x >= 10 && x < 15) || (y == 15 && x >= 12 && x < 15) || (y == 25 && x >= 10 && x < 15))
+                                {
+                                    rgb[0, c.Y + y, c.X + x] = 0;
+                                    rgb[1, c.Y + y, c.X + x] = 0;
+                                    rgb[2, c.Y + y, c.X + x] = 0;
+                                }
+                                break;
+                            case 4:
+                                if ((x == 15 && y > 5 && y < 25) || (x == 10 && y > 5 && y < 15) || (x > 10 && x < 15 && y == 15))
+                                {
+                                    rgb[0, c.Y + y, c.X + x] = 0;
+                                    rgb[1, c.Y + y, c.X + x] = 0;
+                                    rgb[2, c.Y + y, c.X + x] = 0;
+                                }
+                                break;
+                            case 5:
+                                if ((x == 10 && y > 5 && y < 15) || (x == 15 && y > 15 && y < 25) || (y == 5 && x > 10 && x < 15) || (y == 15 && x > 10 && x < 15) || (y == 25 && x >= 10 && x < 15))
+                                {
+                                    rgb[0, c.Y + y, c.X + x] = 255;
+                                    rgb[1, c.Y + y, c.X + x] = 255;
+                                    rgb[2, c.Y + y, c.X + x] = 255;
+                                }
+                                break;
+                            case 6:
+                                if ((x == 10 && y > 5 && y < 25) || (x == 15 && y > 15 && y < 25) || (y == 5 && x > 10 && x <= 15) || (y == 15 && x > 10 && x < 15) || (y == 25 && x >= 10 && x < 15))
+                                {
+                                    rgb[0, c.Y + y, c.X + x] = 255;
+                                    rgb[1, c.Y + y, c.X + x] = 255;
+                                    rgb[2, c.Y + y, c.X + x] = 255;
+                                }
+                                break;
+
+                            case 7:
+                                if ((x == 15 && y > 5 && y < 25) ||(y == 5 && x >= 10 && x <= 15)|| (y == 15 && x >= 12 && x <= 18)) //|| (x > 10 && x < 15 && y > 5 && y < 25 && 2*x + y == 35))
+                                {
+                                    rgb[0, c.Y + y, c.X + x] = 255;
+                                    rgb[1, c.Y + y, c.X + x] = 255;
+                                    rgb[2, c.Y + y, c.X + x] = 255;
+                                }
+                                break;
+                            case 8:
+                                if ((x == 10 && y > 5 && y < 25) || (x == 15 && y > 5 && y < 25) ||  (y == 5 && x > 10 && x < 15) || (y == 15 && x > 10 && x < 15) || (y == 25 && x > 10 && x < 15))
+                                {
+                                    rgb[0, c.Y + y, c.X + x] = 255;
+                                    rgb[1, c.Y + y, c.X + x] = 255;
+                                    rgb[2, c.Y + y, c.X + x] = 255;
+                                }
+                                break;
+                            case 9:
+                                if ((x == 10 && y > 5 && y < 15) || (x == 15 && y > 5 && y < 25) || (y == 5 && x > 10 && x < 15) || (y == 15 && x > 10 && x < 15) || (y == 25 && x > 10 && x < 15))
+                                {
+                                    rgb[0, c.Y + y, c.X + x] = 255;
+                                    rgb[1, c.Y + y, c.X + x] = 255;
+                                    rgb[2, c.Y + y, c.X + x] = 255;
+                                }
+                                break;
+                            case 10:
+                                if ((x == 10 && y > 5 && y < 25) || (x == 15 && y > 5 && y < 25) || (y == 5 && x > 10 && x < 15) || (y == 25 && x > 10 && x < 15))
+                                {
+                                    rgb[0, c.Y + y, c.X + x] = 0;
+                                    rgb[1, c.Y + y, c.X + x] = 0;
+                                    rgb[2, c.Y + y, c.X + x] = 0;
+                                }
+                                break;
+                            default:
+                                if ((x >= 13 && x<=15 && y > 5 && y < 25))
+                                {
+                                    rgb[0, c.Y + y, c.X + x] = 255;
+                                    rgb[1, c.Y + y, c.X + x] = 255;
+                                    rgb[2, c.Y + y, c.X + x] = 255;
+                                }
+                                break;
+                        }
+                    }
                 }
         }
 
@@ -340,12 +479,12 @@ namespace Evolution_3._0
             int y;
             for (int i = 0; i < rnd.Next(1, 6); i++)
             {
-                x = rnd.Next(2,Block.widthField-2);
-                y = rnd.Next(2,Block.heightField-2);
+                x = rnd.Next(2, Block.widthField - 2);
+                y = rnd.Next(2, Block.heightField - 2);
 
                 if (Status[x, y] == 'E')
                 {
-                    Block element = new Block(6,x,y);
+                    Block element = new Block(6, x, y);
                     ListElements.Add(element);
                     Status[x, y] = element.status;
                     CreateOrganic(0, 0, 0, 1, x, y);
@@ -357,6 +496,7 @@ namespace Evolution_3._0
         {
             timerDraw.Enabled = true;
             timerTurn.Enabled = true;
+            timeStart = DateTime.Now;
         }
     }
 }

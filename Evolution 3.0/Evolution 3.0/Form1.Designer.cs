@@ -41,6 +41,7 @@
             this.buttonStart = new System.Windows.Forms.Button();
             this.labelElements = new System.Windows.Forms.Label();
             this.labelShowElem = new System.Windows.Forms.Label();
+            this.labelTime = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewInfo)).BeginInit();
             this.SuspendLayout();
             // 
@@ -100,7 +101,7 @@
             this.dataGridViewInfo.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells;
             this.dataGridViewInfo.BackgroundColor = System.Drawing.SystemColors.ButtonFace;
             this.dataGridViewInfo.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridViewInfo.Location = new System.Drawing.Point(1080, 189);
+            this.dataGridViewInfo.Location = new System.Drawing.Point(1080, 255);
             this.dataGridViewInfo.Name = "dataGridViewInfo";
             this.dataGridViewInfo.Size = new System.Drawing.Size(260, 312);
             this.dataGridViewInfo.TabIndex = 9;
@@ -155,11 +156,22 @@
             this.labelShowElem.TabIndex = 13;
             this.labelShowElem.Text = "Elements";
             // 
+            // labelTime
+            // 
+            this.labelTime.AutoSize = true;
+            this.labelTime.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.labelTime.Location = new System.Drawing.Point(1089, 175);
+            this.labelTime.Name = "labelTime";
+            this.labelTime.Size = new System.Drawing.Size(60, 26);
+            this.labelTime.TabIndex = 15;
+            this.labelTime.Text = "Time";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1352, 661);
+            this.Controls.Add(this.labelTime);
             this.Controls.Add(this.labelElements);
             this.Controls.Add(this.labelShowElem);
             this.Controls.Add(this.buttonStart);
@@ -193,6 +205,7 @@
         private System.Windows.Forms.Button buttonStart;
         private System.Windows.Forms.Label labelElements;
         private System.Windows.Forms.Label labelShowElem;
+        private System.Windows.Forms.Label labelTime;
     }
 }
 
