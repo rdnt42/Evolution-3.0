@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace Evolution_3._0
 {
+    /// <summary>
+    /// Класс объектов типа клетка
+    /// </summary>
     class Cells : Block
     {
         static int countCell = 0;
@@ -20,6 +23,7 @@ namespace Evolution_3._0
         int y;
         public int prewX;
         public int prewY;
+        public bool isSelect;
 
         public Cells(int carbon, int xCell, int yCell)
         {
@@ -38,6 +42,7 @@ namespace Evolution_3._0
             stepLength = 2;
             maxHp = 50 + 100 * group;
             hp = maxHp;
+            isSelect = false;
         }
 
 

@@ -42,6 +42,7 @@
             this.labelElements = new System.Windows.Forms.Label();
             this.labelShowElem = new System.Windows.Forms.Label();
             this.labelTime = new System.Windows.Forms.Label();
+            this.labelTest = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewInfo)).BeginInit();
             this.SuspendLayout();
             // 
@@ -105,6 +106,8 @@
             this.dataGridViewInfo.Name = "dataGridViewInfo";
             this.dataGridViewInfo.Size = new System.Drawing.Size(260, 312);
             this.dataGridViewInfo.TabIndex = 9;
+            this.dataGridViewInfo.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridViewInfo_CellClick);
+            this.dataGridViewInfo.CellLeave += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridViewInfo_CellLeave);
             // 
             // labelFoods
             // 
@@ -166,11 +169,22 @@
             this.labelTime.TabIndex = 15;
             this.labelTime.Text = "Time";
             // 
+            // labelTest
+            // 
+            this.labelTest.AutoSize = true;
+            this.labelTest.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.labelTest.Location = new System.Drawing.Point(1091, 220);
+            this.labelTest.Name = "labelTest";
+            this.labelTest.Size = new System.Drawing.Size(70, 25);
+            this.labelTest.TabIndex = 16;
+            this.labelTest.Text = "label1";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1352, 661);
+            this.Controls.Add(this.labelTest);
             this.Controls.Add(this.labelTime);
             this.Controls.Add(this.labelElements);
             this.Controls.Add(this.labelShowElem);
@@ -206,6 +220,7 @@
         private System.Windows.Forms.Label labelElements;
         private System.Windows.Forms.Label labelShowElem;
         private System.Windows.Forms.Label labelTime;
+        private System.Windows.Forms.Label labelTest;
     }
 }
 

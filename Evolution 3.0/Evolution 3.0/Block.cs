@@ -5,8 +5,12 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Drawing;
 
+
 namespace Evolution_3._0
 {
+    /// <summary>
+    /// Класс для генерации блоков элементов и основых характеристик всех объектов
+    /// </summary>
     class Block
     {
         static int countBlock = 0;

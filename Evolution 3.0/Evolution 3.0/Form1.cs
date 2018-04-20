@@ -15,7 +15,7 @@ namespace Evolution_3._0
     {
         char[,] Status = new char[Block.widthField, Block.heightField];
         char[,] PrewStatus = new char[Block.widthField, Block.heightField];
-        byte[,,] rgb = new byte[3, Block.heightField * Block.heightBlock, Block.widthField * Block.widthBlock];
+        byte[,,] rgb = new byte[3, Block.heightMap, Block.widthMap];
         static public Random rnd = new Random();
 
         List<Cells> ListCells = new List<Cells>();
@@ -34,11 +34,21 @@ namespace Evolution_3._0
             dt.Columns.Add("HP");
             dt.Columns.Add("MaxHP");
             /////////////BITMAP MY GAME/////////////////////////////////////////////////////////////////////
-            map.Size = new Size(Block.widthField * Block.widthBlock, Block.heightField * Block.heightBlock);
+            map.Size = new Size(Block.widthMap, Block.heightMap);
             map.Location = new Point(0, 0);
             this.Controls.Add(map);
         }
 
+        /************************************ ОБРАБОТЧИКИ КНОПОК *********************************************
+         *****************************************************************************************************
+         *****************************************************************************************************
+         ******************************************************************************************************/
+
+        /// <summary>
+        ///   начальная геренация элементов на поле
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void btnGeneration_Click(object sender, EventArgs e)
         {
 
@@ -76,7 +86,304 @@ namespace Evolution_3._0
             DrowAll();
         }
 
+        /// <summary>
+        /// создание органики (Cell, Food)
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void btn_create_Click(object sender, EventArgs e)
+        {
+            /////////////////////////здесь заполнение массива карты
+            for (int y = 2; y < Block.heightField - 2; y++)
+            {
+                for (int x = 2; x < Block.widthField - 2; x++)
+                {
+                    if (Status[x, y] == 'C')
+                    {
+                        CreateOrganic(2, 3, 2, 2, x, y);
+                    }
+                }
+            }
 
+            for (int y = 0; y < Block.heightField; y++)
+            {
+                for (int x = 0; x < Block.widthField; x++)
+                {
+                    if (Status[x, y] != 'F')//(!char.IsDigit(Status[x, y]))
+                    {
+                        Status[x, y] = 'E';
+                    }
+                }
+            }
+
+            PrintElement();
+            foreach (var c in ListCells)
+                PrintCell(c);
+            foreach (var f in ListFoods)
+                PrintFood(f);
+            DrowAll();
+
+        }
+
+        /// <summary>
+        /// запуск игровых таймеров
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void buttonStart_Click(object sender, EventArgs e)
+        {
+            timerDraw.Enabled = true;
+            timerTurn.Enabled = true;
+            timeStart = DateTime.Now;
+        }
+
+        /// <summary>
+        /// Событие при выобре элемента из таблицы данных
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void dataGridViewInfo_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+
+            if (e.RowIndex > -1 && e.ColumnIndex == 0)
+            {
+                (ListCells.Find(x => x.idCell == Convert.ToInt32(dataGridViewInfo.Rows[e.RowIndex].Cells[e.ColumnIndex].Value))).isSelect = true; ; // лямбда выражение (и предикат для поиска)
+            }
+
+        }
+
+        /// <summary>
+        /// событие при смене элемента из таблицы данных
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void dataGridViewInfo_CellLeave(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex > -1 && e.ColumnIndex == 0)
+            {
+                (ListCells.Find(x => x.idCell == Convert.ToInt32(dataGridViewInfo.Rows[e.RowIndex].Cells[e.ColumnIndex].Value))).isSelect = false; ; // лямбда выражение (и предикат для поиска)
+            }
+        }
+
+        /************************* ВСПОМОГАТЕЛЬНЫЕ МЕТОДЫ ЗАПОЛНЕНИЯ МАССИВА RGB *****************************
+         *****************************************************************************************************
+         *****************************************************************************************************
+         ******************************************************************************************************/
+        /// <summary>
+        /// Метод для заполнения трехмерного массива
+        /// </summary>
+        /// <param name="xSet"> Координата Х</param>
+        /// <param name="ySet"> Координата У</param>
+        /// <param name="rSet"> Значение Red</param>
+        /// <param name="gSet"> Значение Green</param>
+        /// <param name="bSet"> Значение Blue</param>
+        void PrintRGB(int xSet, int ySet, byte rSet, byte gSet, byte bSet)
+        {
+            rgb[0, ySet, xSet] = rSet;
+            rgb[1, ySet, xSet] = gSet;
+            rgb[2, ySet, xSet] = bSet;
+        }
+
+        /// <summary>
+        /// Отрисовка каждого объекта Cells
+        /// </summary>
+        /// <param name="c"> объект Cells из ListCells</param>
+        void PrintCell(Cells c)
+        {
+            for (int y = 0; y < Block.heightCell; y++)
+                for (int x = 0; x < Block.widthCell; x++)
+                {
+                    byte r = 0, g = 0, b = 0;
+                    //Фоновый цвет 
+                    switch (c.group)
+                    {
+                        case 2:
+                            r = 255; g = 228; b = 225;
+                            break;
+                        case 3:
+                            r = 189; g = 183; b = 107;
+                            break;
+                        case 4:
+                            r = 255; g = 255; b = 0;
+                            break;
+                        case 5:
+                            r = 75; g = 0; b = 130;
+                            break;
+                        case 6:
+                            r = 255; g = 0; b = 255;
+                            break;
+                        case 7:
+                            r = 128; g = 0; b = 128;
+                            break;
+
+                        case 8:
+                            r = 0; g = 0; b = 128;
+                            break;
+                        case 9:
+                            r = 47; g = 79; b = 79;
+                            break;
+                        case 10:
+                            r = 0; g = 255; b = 0;
+                            break;
+                        default:
+                            r = 0; g = 0; b = 0;
+                            break;
+                    }
+
+                    PrintRGB(c.X + x, c.Y + y, r, g, b);
+
+                    if (x < 2 || x >= Block.widthCell - 2 || y < 2 || y >= Block.heightCell - 2)
+                    {
+                        if (c.isSelect)
+                        {
+                            //белая рамка при выделении объекта
+                            PrintRGB(c.X + x, c.Y + y, 255, 255, 255);
+                        }
+                        else
+                        {
+                            //черная рамка вокруг клетки
+                            PrintRGB(c.X + x, c.Y + y, 0, 0, 0);
+                        }
+                    }
+                    else
+                    {
+                        //цефра поверх основного фона объекта
+                        switch (c.group)
+                        {
+                            case 1:
+                                if ((x == 15 && y > 5 && y < 25) || (x > 10 && x < 15 && y > 5 && y < 15 && x + y == 20))
+                                {
+                                    PrintRGB(c.X + x, c.Y + y, 0, 0, 0);
+                                }
+                                break;
+                            case 2:
+                                if ((x == 10 && y > 15 && y < 25) || (x == 15 && y > 5 && y < 15) || (y == 5 && x > 10 && x < 15) || (y == 15 && x > 10 && x < 15) || (y == 25 && x >= 10 && x < 15))
+                                {
+                                    PrintRGB(c.X + x, c.Y + y, 0, 0, 0);
+                                }
+                                break;
+                            case 3:
+                                if ((x == 15 && y > 5 && y < 25) || (y == 5 && x >= 10 && x < 15) || (y == 15 && x >= 12 && x < 15) || (y == 25 && x >= 10 && x < 15))
+                                {
+                                    PrintRGB(c.X + x, c.Y + y, 0, 0, 0);
+                                }
+                                break;
+                            case 4:
+                                if ((x == 15 && y > 5 && y < 25) || (x == 10 && y > 5 && y < 15) || (x > 10 && x < 15 && y == 15))
+                                {
+                                    PrintRGB(c.X + x, c.Y + y, 0, 0, 0);
+                                }
+                                break;
+                            case 5:
+                                if ((x == 10 && y > 5 && y < 15) || (x == 15 && y > 15 && y < 25) || (y == 5 && x > 10 && x < 15) || (y == 15 && x > 10 && x < 15) || (y == 25 && x >= 10 && x < 15))
+                                {
+                                    PrintRGB(c.X + x, c.Y + y, 255, 255, 255);
+                                }
+                                break;
+                            case 6:
+                                if ((x == 10 && y > 5 && y < 25) || (x == 15 && y > 15 && y < 25) || (y == 5 && x > 10 && x <= 15) || (y == 15 && x > 10 && x < 15) || (y == 25 && x >= 10 && x < 15))
+                                {
+                                    PrintRGB(c.X + x, c.Y + y, 255, 255, 255);
+                                }
+                                break;
+
+                            case 7:
+                                if ((x == 15 && y > 5 && y < 25) || (y == 5 && x >= 10 && x <= 15) || (y == 15 && x >= 12 && x <= 18)) //|| (x > 10 && x < 15 && y > 5 && y < 25 && 2*x + y == 35))
+                                {
+                                    PrintRGB(c.X + x, c.Y + y, 255, 255, 255);
+                                }
+                                break;
+                            case 8:
+                                if ((x == 10 && y > 5 && y < 25) || (x == 15 && y > 5 && y < 25) || (y == 5 && x > 10 && x < 15) || (y == 15 && x > 10 && x < 15) || (y == 25 && x > 10 && x < 15))
+                                {
+                                    PrintRGB(c.X + x, c.Y + y, 255, 255, 255);
+                                }
+                                break;
+                            case 9:
+                                if ((x == 10 && y > 5 && y < 15) || (x == 15 && y > 5 && y < 25) || (y == 5 && x > 10 && x < 15) || (y == 15 && x > 10 && x < 15) || (y == 25 && x > 10 && x < 15))
+                                {
+                                    PrintRGB(c.X + x, c.Y + y, 255, 255, 255);
+                                }
+                                break;
+                            case 10:
+                                if ((x == 10 && y > 5 && y < 25) || (x == 15 && y > 5 && y < 25) || (y == 5 && x > 10 && x < 15) || (y == 25 && x > 10 && x < 15))
+                                {
+                                    PrintRGB(c.X + x, c.Y + y, 255, 255, 255);
+                                }
+                                break;
+                            default:
+                                if ((x >= 13 && x <= 15 && y > 5 && y < 25))
+                                {
+                                    PrintRGB(c.X + x, c.Y + y, 255, 255, 255);
+                                }
+                                break;
+                        }
+                    }
+                }
+        }
+
+        /// <summary>
+        /// Отрисовка каждого объекта Food
+        /// </summary>
+        /// <param name="f"> объект Food из ListFoods</param>
+        void PrintFood(Food f)
+        {
+            for (int y = 0; y < Block.heightFood; y++)
+                for (int x = 0; x < Block.widthFood; x++)
+                {
+                    PrintRGB(f.X + x, f.Y + y, 255, 0, 0);
+                }
+        }
+
+        /// <summary>
+        /// Отрисовка каждого элемента из массива Status[x, y]
+        /// В отличие от Cells, Food элементы отрисовываются не через считывание параметров 
+        /// из листа, а через двумерный массив координат
+        /// </summary>
+        void PrintElement()
+        {
+            byte r = 0, g = 0, b = 0;
+            for (int y = 0; y < Block.heightField; y++)
+            {
+                for (int x = 0; x < Block.widthField; x++)
+                {
+                    switch (Status[x, y])
+                    {
+                        case 'E':
+                            r = 173; g = 216; b = 230;
+                            break;
+                        case 'C':
+                            r = 255; g = 104; b = 0;
+                            break;
+                        case 'N':
+                            r = 0; g = 184; b = 217;
+                            break;
+                        case 'H':
+                            r = 138; g = 127; b = 128;
+                            break;
+                        case 'O':
+                            r = 173; g = 216; b = 230;
+                            break;
+                        case 'S':
+                            r = 143; g = 254; b = 9;
+                            break;
+                        case 'P':
+                            r = 10; g = 10; b = 10;
+                            break;
+                    }
+
+                    for (int h = 0; h < Block.heightBlock; h++)
+                        for (int w = 0; w < Block.widthBlock; w++)
+                        {
+                            PrintRGB(Block.widthBlock * x + w, Block.heightBlock * y + h, r, g, b);
+                        }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Отрисовка всей карты из трехмерного массива rgb[,,]
+        /// </summary>
         public void DrowAll()
         {
             Graphics g = CreateGraphics();
@@ -85,6 +392,21 @@ namespace Evolution_3._0
             g.Dispose();
         }
 
+        /************************* СОЗДАНИЕ ОБЪЕКТОВ CELLS, FOOD *********************************************
+         *****************************************************************************************************
+         *****************************************************************************************************
+         ******************************************************************************************************/
+
+        /// <summary>
+        /// Создание новых объектов Cells,Food,текущая координата принимается за центр
+        /// считываются блоки 5х5. Приоритет создания: Cells -> Food -> 
+        /// </summary>
+        /// <param name="minHydrogen">Минимальные требования кол-ва водорода</param>
+        /// <param name="minCarbon">Минимальные требования кол-ва углерода</param>
+        /// <param name="minNytrogen">Минимальные требования кол-ва азота</param>
+        /// <param name="minOxygen">Минимальные требования кол-ва кислорода</param>
+        /// <param name="xCell">Текущая координата Х</param>
+        /// <param name="yCell">Текущая координата У</param>
         void CreateOrganic(int minHydrogen, int minCarbon, int minNytrogen, int minOxygen, int xCell, int yCell)
         {
             int hydrogen = 0;
@@ -133,7 +455,7 @@ namespace Evolution_3._0
                 dataGridViewInfo.DataSource = dt;
             }
 
-            else if (hydrogen > minHydrogen && carbon > minCarbon)// && oxygen > minOxygen && nytrogen >= minNytrogen)
+            else if (hydrogen > minHydrogen && carbon > minCarbon)//&& oxygen > minOxygen && nytrogen >= minNytrogen)
             {
                 //create Food
                 Food f = new Food(xCell * Block.widthBlock, yCell * Block.heightBlock);
@@ -145,63 +467,36 @@ namespace Evolution_3._0
             }
         }
 
-        private void btn_create_Click(object sender, EventArgs e)
-        {
-            /////////////////////////здесь заполнение массива карты
-            for (int y = 2; y < Block.heightField - 2; y++)
-            {
-                for (int x = 2; x < Block.widthField - 2; x++)
-                {
-                    if (Status[x, y] == 'C')
-                    {
-                        CreateOrganic(2, 3, 2, 2, x, y);
-                    }
-                }
-            }
-
-            for (int y = 0; y < Block.heightField; y++)
-            {
-                for (int x = 0; x < Block.widthField; x++)
-                {
-                    if (Status[x, y] != 'F')//(!char.IsDigit(Status[x, y]))
-                    {
-                        Status[x, y] = 'E';
-                    }
-                }
-            }
-
-            PrintElement();
-            foreach (var c in ListCells)
-                PrintCell(c);
-            foreach (var f in ListFoods)
-                PrintFood(f);
-            DrowAll();
-
-        }
-
+       /********************************************** ТАЙМЕРЫ *********************************************
+       *****************************************************************************************************
+       *****************************************************************************************************
+       ******************************************************************************************************/
+       /// <summary>
+       /// Таймер отрисовки карты
+       /// </summary>
+       /// <param name="sender"></param>
+       /// <param name="e"></param>
         private void timerDraw_Tick(object sender, EventArgs e)
         {
             DrowAll();
         }
-        private static bool DeadElement(Block element) //предикат для работы с RemoveAll
-        {
-            if (element.age > 400)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
+
+        /// <summary>
+        /// Таймер хода
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void timerTurn_Tick(object sender, EventArgs e)
         {
+            //увеличение возраста элементов и очистка массива Status[,] от превысивших лимит
             foreach (var el in ListElements)
             {
                 el.age++;
                 if (el.age > 400)
                     Status[el.X, el.Y] = 'E';
             }
+            //удаление элементов превысивших лимит
+            ListElements.RemoveAll(x => x.age > 400);
 
             GenerationElement();
 
@@ -214,10 +509,12 @@ namespace Evolution_3._0
 
             foreach (var c in ListCells)
             {
+                //движение всех клеток
                 c.Moving(ListFoods);
 
                 PrintCell(c);
 
+                //обновление таблицы данных при изменении кол-ва hp,maxHp,group
                 dt.AsEnumerable().Where(p => Convert.ToInt32(p["Id"]) == c.idCell).ToList().ForEach( //обновление таблицы
                     k =>
                     {
@@ -240,8 +537,9 @@ namespace Evolution_3._0
                             k.EndEdit();
                         }
                     });
-
             }
+
+            //создание новых клеток, подумать как убрать двойной проход по листу
             foreach (var cBorn in ListCells)
             {
                 if (cBorn.maxHp > 800 && cBorn.hp > 600)
@@ -263,7 +561,6 @@ namespace Evolution_3._0
                 }
             }
 
-            ListElements.RemoveAll(DeadElement);
             labelCells.Text = ListCells.Count.ToString();
             labelFoods.Text = ListFoods.Count.ToString();
             labelElements.Text = ListElements.Count.ToString();
@@ -271,208 +568,9 @@ namespace Evolution_3._0
         }
 
 
-        void PrintCell(Cells c)
-        {
-            for (int y = 0; y < Block.heightCell; y++)
-                for (int x = 0; x < Block.widthCell; x++)
-                {
-                    byte r = 0, g = 0, b = 0;
-                    switch (c.group)
-                    {
-                        case 2:
-                            r = 255; g = 228; b = 225;
-                            break;
-                        case 3:
-                            r = 189; g = 183; b = 107;
-                            break;
-                        case 4:
-                            r = 255; g = 255; b = 0;
-                            break;
-                        case 5:
-                            r = 75; g = 0; b = 130;
-                            break;
-                        case 6:
-                            r = 255; g = 0; b = 255;
-                            break;
-                        case 7:
-                            r = 128; g = 0; b = 128;
-                            break;
-
-                        case 8:
-                            r = 0; g = 0; b = 128;
-                            break;
-                        case 9:
-                            r = 47; g = 79; b = 79;
-                            break;
-                        case 10:
-                            r = 0; g = 255; b = 0;
-                            break;
-                        default:
-                            r = 0; g = 0; b = 0;
-                            break;
-                    }
-                    rgb[0, c.Y + y, c.X + x] = r;
-                    rgb[1, c.Y + y, c.X + x] = g;
-                    rgb[2, c.Y + y, c.X + x] = b;
-
-                    if (x < 2 || x >= Block.widthCell - 2 || y < 2 || y >= Block.heightCell - 2)
-                    {
-                        rgb[0, c.Y + y, c.X + x] = 0;
-                        rgb[1, c.Y + y, c.X + x] = 0;
-                        rgb[2, c.Y + y, c.X + x] = 0;
-                    }
-                    else
-                    {
-                        switch (c.group)
-                        {
-                            case 1:
-                                if ((x == 15 && y > 5 && y < 25) || (x > 10 && x < 15 && y > 5 && y < 15 && x + y == 20))
-                                {
-                                    rgb[0, c.Y + y, c.X + x] = 0;
-                                    rgb[1, c.Y + y, c.X + x] = 0;
-                                    rgb[2, c.Y + y, c.X + x] = 0;
-                                }
-                                break;
-                            case 2:
-                                if ((x == 10 && y > 15 && y < 25) || (x == 15 && y > 5 && y < 15) || (y == 5 && x > 10 && x < 15) || (y == 15 && x > 10 && x < 15) || (y == 25 && x >= 10 && x < 15))
-                                {
-                                    rgb[0, c.Y + y, c.X + x] = 0;
-                                    rgb[1, c.Y + y, c.X + x] = 0;
-                                    rgb[2, c.Y + y, c.X + x] = 0;
-                                }
-                                break;
-                            case 3:
-                                if ((x == 15 && y > 5 && y < 25) || (y == 5 && x >= 10 && x < 15) || (y == 15 && x >= 12 && x < 15) || (y == 25 && x >= 10 && x < 15))
-                                {
-                                    rgb[0, c.Y + y, c.X + x] = 0;
-                                    rgb[1, c.Y + y, c.X + x] = 0;
-                                    rgb[2, c.Y + y, c.X + x] = 0;
-                                }
-                                break;
-                            case 4:
-                                if ((x == 15 && y > 5 && y < 25) || (x == 10 && y > 5 && y < 15) || (x > 10 && x < 15 && y == 15))
-                                {
-                                    rgb[0, c.Y + y, c.X + x] = 0;
-                                    rgb[1, c.Y + y, c.X + x] = 0;
-                                    rgb[2, c.Y + y, c.X + x] = 0;
-                                }
-                                break;
-                            case 5:
-                                if ((x == 10 && y > 5 && y < 15) || (x == 15 && y > 15 && y < 25) || (y == 5 && x > 10 && x < 15) || (y == 15 && x > 10 && x < 15) || (y == 25 && x >= 10 && x < 15))
-                                {
-                                    rgb[0, c.Y + y, c.X + x] = 255;
-                                    rgb[1, c.Y + y, c.X + x] = 255;
-                                    rgb[2, c.Y + y, c.X + x] = 255;
-                                }
-                                break;
-                            case 6:
-                                if ((x == 10 && y > 5 && y < 25) || (x == 15 && y > 15 && y < 25) || (y == 5 && x > 10 && x <= 15) || (y == 15 && x > 10 && x < 15) || (y == 25 && x >= 10 && x < 15))
-                                {
-                                    rgb[0, c.Y + y, c.X + x] = 255;
-                                    rgb[1, c.Y + y, c.X + x] = 255;
-                                    rgb[2, c.Y + y, c.X + x] = 255;
-                                }
-                                break;
-
-                            case 7:
-                                if ((x == 15 && y > 5 && y < 25) ||(y == 5 && x >= 10 && x <= 15)|| (y == 15 && x >= 12 && x <= 18)) //|| (x > 10 && x < 15 && y > 5 && y < 25 && 2*x + y == 35))
-                                {
-                                    rgb[0, c.Y + y, c.X + x] = 255;
-                                    rgb[1, c.Y + y, c.X + x] = 255;
-                                    rgb[2, c.Y + y, c.X + x] = 255;
-                                }
-                                break;
-                            case 8:
-                                if ((x == 10 && y > 5 && y < 25) || (x == 15 && y > 5 && y < 25) ||  (y == 5 && x > 10 && x < 15) || (y == 15 && x > 10 && x < 15) || (y == 25 && x > 10 && x < 15))
-                                {
-                                    rgb[0, c.Y + y, c.X + x] = 255;
-                                    rgb[1, c.Y + y, c.X + x] = 255;
-                                    rgb[2, c.Y + y, c.X + x] = 255;
-                                }
-                                break;
-                            case 9:
-                                if ((x == 10 && y > 5 && y < 15) || (x == 15 && y > 5 && y < 25) || (y == 5 && x > 10 && x < 15) || (y == 15 && x > 10 && x < 15) || (y == 25 && x > 10 && x < 15))
-                                {
-                                    rgb[0, c.Y + y, c.X + x] = 255;
-                                    rgb[1, c.Y + y, c.X + x] = 255;
-                                    rgb[2, c.Y + y, c.X + x] = 255;
-                                }
-                                break;
-                            case 10:
-                                if ((x == 10 && y > 5 && y < 25) || (x == 15 && y > 5 && y < 25) || (y == 5 && x > 10 && x < 15) || (y == 25 && x > 10 && x < 15))
-                                {
-                                    rgb[0, c.Y + y, c.X + x] = 0;
-                                    rgb[1, c.Y + y, c.X + x] = 0;
-                                    rgb[2, c.Y + y, c.X + x] = 0;
-                                }
-                                break;
-                            default:
-                                if ((x >= 13 && x<=15 && y > 5 && y < 25))
-                                {
-                                    rgb[0, c.Y + y, c.X + x] = 255;
-                                    rgb[1, c.Y + y, c.X + x] = 255;
-                                    rgb[2, c.Y + y, c.X + x] = 255;
-                                }
-                                break;
-                        }
-                    }
-                }
-        }
-
-        void PrintFood(Food f)
-        {
-            for (int y = 0; y < Block.heightFood; y++)
-                for (int x = 0; x < Block.widthFood; x++)
-                {
-                    rgb[0, f.Y + y, f.X + x] = 255;
-                    rgb[1, f.Y + y, f.X + x] = 0;
-                    rgb[2, f.Y + y, f.X + x] = 0;
-                }
-        }
-
-        void PrintElement()
-        {
-            byte r = 0, g = 0, b = 0;
-            for (int y = 0; y < Block.heightField; y++)
-            {
-                for (int x = 0; x < Block.widthField; x++)
-                {
-                    switch (Status[x, y])
-                    {
-                        case 'E':
-                            r = 173; g = 216; b = 230;
-                            break;
-                        case 'C':
-                            r = 255; g = 104; b = 0;
-                            break;
-                        case 'N':
-                            r = 0; g = 184; b = 217;
-                            break;
-                        case 'H':
-                            r = 138; g = 127; b = 128;
-                            break;
-                        case 'O':
-                            r = 173; g = 216; b = 230;
-                            break;
-                        case 'S':
-                            r = 143; g = 254; b = 9;
-                            break;
-                        case 'P':
-                            r = 10; g = 10; b = 10;
-                            break;
-                    }
-
-                    for (int h = 0; h < Block.heightBlock; h++)
-                        for (int w = 0; w < Block.widthBlock; w++)
-                        {
-                            rgb[0, Block.heightBlock * y + h, Block.widthBlock * x + w] = r;
-                            rgb[1, Block.heightBlock * y + h, Block.widthBlock * x + w] = g;
-                            rgb[2, Block.heightBlock * y + h, Block.widthBlock * x + w] = b;
-                        }
-                }
-            }
-        }
-
+        /// <summary>
+        /// рандомная генерация новых элементов
+        /// </summary>
         void GenerationElement()
         {
             int x;
@@ -490,13 +588,6 @@ namespace Evolution_3._0
                     CreateOrganic(0, 0, 0, 1, x, y);
                 }
             }
-        }
-
-        private void buttonStart_Click(object sender, EventArgs e)
-        {
-            timerDraw.Enabled = true;
-            timerTurn.Enabled = true;
-            timeStart = DateTime.Now;
         }
     }
 }

@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace Evolution_3._0
 {
+    /// <summary>
+    /// Класс объектов типа еда
+    /// </summary>
     class Food : Block
     {
         static int countFood = 0;
