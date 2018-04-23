@@ -34,10 +34,11 @@ namespace Evolution_3._0
             Y = yCell;
             prewX = X;
             prewY = Y;
-            if (carbon == 1)
-                group = rnd.Next(2, 6);
-            else
-                group = carbon;
+            /* if (carbon == 1)
+                 group = rnd.Next(2, 6);
+             else
+                 group = carbon;*/
+            group = carbon;
             range = 100;
             stepLength = 2;
             maxHp = 50 + 100 * group;
@@ -121,7 +122,6 @@ namespace Evolution_3._0
                 Y += stepY;
                 if (deltaX == 0 && deltaY == 0)   //здесь клетка съедает еду
                 {
-                    Foods[catchFood].isAlive = false;
                     Foods.Remove(Foods[catchFood]);
 
                     int upHp = 10;
@@ -132,7 +132,7 @@ namespace Evolution_3._0
                     else
                         hp = maxHp;
 
-                    if (hp % 50 == 0)
+                    if (maxHp >= 50 + 100 * group +50)
                         group++;
                 }
             }
@@ -142,6 +142,19 @@ namespace Evolution_3._0
                 X += moveX * stepLength;
                 Y += moveY * stepLength;
             }
+        }
+
+        public bool Born()
+        {
+            if (maxHp > 800 && hp > 600)
+            {
+                maxHp /= 2;
+                hp /= 2;
+                group /= 2;
+                X -= Block.widthCell;
+                return true;
+            }
+            return false;
         }
     }
 }

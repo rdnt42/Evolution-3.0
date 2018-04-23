@@ -14,7 +14,6 @@ namespace Evolution_3._0
     public partial class Form1 : Form
     {
         char[,] Status = new char[Block.widthField, Block.heightField];
-        char[,] PrewStatus = new char[Block.widthField, Block.heightField];
         byte[,,] rgb = new byte[3, Block.heightMap, Block.widthMap];
         static public Random rnd = new Random();
 
@@ -25,6 +24,8 @@ namespace Evolution_3._0
 
         DataTable dt = new DataTable();
         PictureBox map = new PictureBox();
+        Bitmap restored;
+
         public Form1()
         {
             InitializeComponent();
@@ -95,26 +96,14 @@ namespace Evolution_3._0
         {
             /////////////////////////здесь заполнение массива карты
             for (int y = 2; y < Block.heightField - 2; y++)
-            {
                 for (int x = 2; x < Block.widthField - 2; x++)
-                {
                     if (Status[x, y] == 'C')
-                    {
                         CreateOrganic(2, 3, 2, 2, x, y);
-                    }
-                }
-            }
+
 
             for (int y = 0; y < Block.heightField; y++)
-            {
                 for (int x = 0; x < Block.widthField; x++)
-                {
-                    if (Status[x, y] != 'F')//(!char.IsDigit(Status[x, y]))
-                    {
-                        Status[x, y] = 'E';
-                    }
-                }
-            }
+                    Status[x, y] = 'E';
 
             PrintElement();
             foreach (var c in ListCells)
@@ -197,8 +186,11 @@ namespace Evolution_3._0
                     //Фоновый цвет 
                     switch (c.group)
                     {
-                        case 2:
+                        case 1:
                             r = 255; g = 228; b = 225;
+                            break;
+                        case 2:
+                            r = 200; g = 208; b = 200;
                             break;
                         case 3:
                             r = 189; g = 183; b = 107;
@@ -215,7 +207,6 @@ namespace Evolution_3._0
                         case 7:
                             r = 128; g = 0; b = 128;
                             break;
-
                         case 8:
                             r = 0; g = 0; b = 128;
                             break;
@@ -330,9 +321,7 @@ namespace Evolution_3._0
         {
             for (int y = 0; y < Block.heightFood; y++)
                 for (int x = 0; x < Block.widthFood; x++)
-                {
                     PrintRGB(f.X + x, f.Y + y, 255, 0, 0);
-                }
         }
 
         /// <summary>
@@ -374,9 +363,7 @@ namespace Evolution_3._0
 
                     for (int h = 0; h < Block.heightBlock; h++)
                         for (int w = 0; w < Block.widthBlock; w++)
-                        {
                             PrintRGB(Block.widthBlock * x + w, Block.heightBlock * y + h, r, g, b);
-                        }
                 }
             }
         }
@@ -386,10 +373,8 @@ namespace Evolution_3._0
         /// </summary>
         public void DrowAll()
         {
-            Graphics g = CreateGraphics();
-            Bitmap restored = Rgb.RgbToBitmapQ(rgb); //Rgb.RgbToBitmapNaive(rgb);
+            restored = Rgb.RgbToBitmapQ(rgb); //Rgb.RgbToBitmapNaive(rgb);
             map.Image = restored;
-            g.Dispose();
         }
 
         /************************* СОЗДАНИЕ ОБЪЕКТОВ CELLS, FOOD *********************************************
@@ -455,7 +440,7 @@ namespace Evolution_3._0
                 dataGridViewInfo.DataSource = dt;
             }
 
-            else if (hydrogen > minHydrogen && carbon > minCarbon)//&& oxygen > minOxygen && nytrogen >= minNytrogen)
+            else if (hydrogen > minHydrogen && carbon > minCarbon )//&& oxygen > minOxygen && nytrogen >= minNytrogen)
             {
                 //create Food
                 Food f = new Food(xCell * Block.widthBlock, yCell * Block.heightBlock);
@@ -467,15 +452,15 @@ namespace Evolution_3._0
             }
         }
 
-       /********************************************** ТАЙМЕРЫ *********************************************
-       *****************************************************************************************************
-       *****************************************************************************************************
-       ******************************************************************************************************/
-       /// <summary>
-       /// Таймер отрисовки карты
-       /// </summary>
-       /// <param name="sender"></param>
-       /// <param name="e"></param>
+        /********************************************** ТАЙМЕРЫ *********************************************
+        *****************************************************************************************************
+        *****************************************************************************************************
+        ******************************************************************************************************/
+        /// <summary>
+        /// Таймер отрисовки карты
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void timerDraw_Tick(object sender, EventArgs e)
         {
             DrowAll();
@@ -507,40 +492,52 @@ namespace Evolution_3._0
                 PrintFood(f);
             }
 
-            foreach (var c in ListCells)
+            for (int i = 0; i <ListCells.Count;i++)
             {
                 //движение всех клеток
-                c.Moving(ListFoods);
-
-                PrintCell(c);
+                ListCells[i].Moving(ListFoods);
+                if (ListCells[i].Born())
+                {
+                    Cells cell = new Cells(ListCells[i].group, ListCells[i].X + Block.widthCell, ListCells[i].Y);
+                    ListCells.Add(cell);
+                    DataRow r = dt.NewRow();
+                    r["Id"] = cell.idCell;
+                    r["Group"] = cell.group;
+                    r["MaxHP"] = cell.maxHp;
+                    r["HP"] = cell.hp;
+                    dt.Rows.Add(r);
+                    dataGridViewInfo.DataSource = dt;
+                }
 
                 //обновление таблицы данных при изменении кол-ва hp,maxHp,group
-                dt.AsEnumerable().Where(p => Convert.ToInt32(p["Id"]) == c.idCell).ToList().ForEach( //обновление таблицы
+                dt.AsEnumerable().Where(p => Convert.ToInt32(p["Id"]) == ListCells[i].idCell).ToList().ForEach( //обновление таблицы
                     k =>
                     {
-                        if (Convert.ToInt32(k["MaxHP"]) != c.maxHp)
+                        if (Convert.ToInt32(k["MaxHP"]) != ListCells[i].maxHp)
                         {
                             k.BeginEdit();
-                            k["MaxHP"] = c.maxHp;
+                            k["MaxHP"] = ListCells[i].maxHp;
                             k.EndEdit();
                         }
-                        if (Convert.ToInt32(k["HP"]) != c.hp)
+                        if (Convert.ToInt32(k["HP"]) != ListCells[i].hp)
                         {
                             k.BeginEdit();
-                            k["HP"] = c.hp;
+                            k["HP"] = ListCells[i].hp;
                             k.EndEdit();
                         }
-                        if (Convert.ToInt32(k["Group"]) != c.group)
+                        if (Convert.ToInt32(k["Group"]) != ListCells[i].group)
                         {
                             k.BeginEdit();
-                            k["Group"] = c.group;
+                            k["Group"] = ListCells[i].group;
                             k.EndEdit();
                         }
                     });
+
+                PrintCell(ListCells[i]);
             }
 
             //создание новых клеток, подумать как убрать двойной проход по листу
-            foreach (var cBorn in ListCells)
+         /*   foreach (var cBorn in ListCells)
             {
                 if (cBorn.maxHp > 800 && cBorn.hp > 600)
                 {
@@ -559,7 +556,7 @@ namespace Evolution_3._0
                     dataGridViewInfo.DataSource = dt;
                     break;
                 }
-            }
+            }*/
 
             labelCells.Text = ListCells.Count.ToString();
             labelFoods.Text = ListFoods.Count.ToString();
@@ -575,7 +572,8 @@ namespace Evolution_3._0
         {
             int x;
             int y;
-            for (int i = 0; i < rnd.Next(1, 6); i++)
+            int num = rnd.Next(1, 6);
+            for (int i = 0; i < num; i++)
             {
                 x = rnd.Next(2, Block.widthField - 2);
                 y = rnd.Next(2, Block.heightField - 2);
