@@ -440,7 +440,7 @@ namespace Evolution_3._0
                 dataGridViewInfo.DataSource = dt;
             }
 
-            else if (hydrogen > minHydrogen && carbon > minCarbon )//&& oxygen > minOxygen && nytrogen >= minNytrogen)
+            else if (hydrogen > minHydrogen && carbon > minCarbon)//&& oxygen > minOxygen && nytrogen >= minNytrogen)
             {
                 //create Food
                 Food f = new Food(xCell * Block.widthBlock, yCell * Block.heightBlock);
@@ -481,7 +481,7 @@ namespace Evolution_3._0
                     Status[el.X, el.Y] = 'E';
             }
             //удаление элементов превысивших лимит
-            ListElements.RemoveAll(x => x.age > 400);
+
 
             GenerationElement();
 
@@ -492,10 +492,10 @@ namespace Evolution_3._0
                 PrintFood(f);
             }
 
-            for (int i = 0; i <ListCells.Count;i++)
+            for (int i = 0; i < ListCells.Count; i++)
             {
                 //движение всех клеток
-                ListCells[i].Moving(ListFoods);
+                ListCells[i].Moving(ListFoods, ListCells);
                 if (ListCells[i].Born())
                 {
                     Cells cell = new Cells(ListCells[i].group, ListCells[i].X + Block.widthCell, ListCells[i].Y);
@@ -531,32 +531,20 @@ namespace Evolution_3._0
                             k["Group"] = ListCells[i].group;
                             k.EndEdit();
                         }
+                        if (ListCells[i].hp <= 0)
+                        {
+                           // k.BeginEdit();
+                            dt.Rows.Remove(k);  //не удаляется, т.к. его могла убить другая клетка позже в листе
+                            //dataGridViewInfo.DataSource = dt;
+                            // k.EndEdit();
+                            // dataGridViewInfo.Refresh();
+                        }
                     });
 
                 PrintCell(ListCells[i]);
             }
-
-            //создание новых клеток, подумать как убрать двойной проход по листу
-         /*   foreach (var cBorn in ListCells)
-            {
-                if (cBorn.maxHp > 800 && cBorn.hp > 600)
-                {
-                    cBorn.maxHp /= 2;
-                    cBorn.hp /= 2;
-                    cBorn.group /= 2;
-                    cBorn.X -= Block.widthCell;
-                    Cells cell = new Cells(cBorn.group, cBorn.X + Block.widthCell, cBorn.Y);
-                    ListCells.Add(cell);
-                    DataRow r = dt.NewRow();
-                    r["Id"] = cell.idCell;
-                    r["Group"] = cell.group;
-                    r["MaxHP"] = cell.maxHp;
-                    r["HP"] = cell.hp;
-                    dt.Rows.Add(r);
-                    dataGridViewInfo.DataSource = dt;
-                    break;
-                }
-            }*/
+            ListCells.RemoveAll(x => x.hp < 0);
+            ListElements.RemoveAll(x => x.age > 400);
 
             labelCells.Text = ListCells.Count.ToString();
             labelFoods.Text = ListFoods.Count.ToString();

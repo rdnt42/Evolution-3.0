@@ -75,21 +75,24 @@ namespace Evolution_3._0
         }
 
 
-        public void Moving(List<Food> Foods)
+        public void Moving(List<Food> Foods, List<Cells> Cells)
         {
             double prewHypotenuse = range + 1;
             int catchFood = -1;
             int countFood = 0;
+
+            int catchCell = -1;
+            int countCell = 0;
 
             int moveX = rnd.Next(-1, 2);
             int moveY = rnd.Next(-1, 2);
 
             foreach (var f in Foods)
             {
-                double h = Y - f.Y;
-                double w = X - f.X;
+                int h = Y - f.Y;
+                int w = X - f.X;
 
-                double hypotenuse = Math.Sqrt(Math.Pow(h, 2) + Math.Pow(w, 2));
+                double hypotenuse = Math.Sqrt(h*h + w*w);
 
                 if (hypotenuse <= range && hypotenuse < prewHypotenuse)
                 {
@@ -99,7 +102,46 @@ namespace Evolution_3._0
                 countFood++;
             }
 
-            if (catchFood != -1)
+
+            foreach (var c in Cells)
+            {
+                int h = Y - c.Y;
+                int w = X - c.X;
+
+                double hypotenuse = Math.Sqrt(h * h + w * w);
+
+                if (hypotenuse <= range && hypotenuse < prewHypotenuse && idCell !=c.idCell)
+                {
+                    prewHypotenuse = hypotenuse;
+                    catchCell = countCell;
+                }
+                countCell++;
+            }
+
+            if (catchCell != -1)
+            {
+                int time = (int)(prewHypotenuse / stepLength);
+                int deltaX = Cells[catchCell].X - X;
+                int deltaY = Cells[catchCell].Y - Y;
+                int stepX = 0;
+                int stepY;
+
+                if (time ==0)
+                {
+                    stepX = 0;
+                    stepY = 0;
+                    Cells[catchCell].hp -= rnd.Next(10);
+                }
+                else
+                {
+                    stepX = deltaX / time;
+                    stepY = deltaY / time;
+                }
+
+                X += stepX;
+                Y += stepY;
+            }
+            else if (catchFood != -1)
             {
                 int time = (int)(prewHypotenuse / stepLength);
                 int deltaX = Foods[catchFood].X - X;
