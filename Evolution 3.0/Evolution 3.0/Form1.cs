@@ -510,38 +510,14 @@ namespace Evolution_3._0
                 }
 
                 //обновление таблицы данных при изменении кол-ва hp,maxHp,group
-                dt.AsEnumerable().Where(p => Convert.ToInt32(p["Id"]) == ListCells[i].idCell).ToList().ForEach( //обновление таблицы
-                    k =>
-                    {
-                        if (Convert.ToInt32(k["MaxHP"]) != ListCells[i].maxHp)
-                        {
-                            k.BeginEdit();
-                            k["MaxHP"] = ListCells[i].maxHp;
-                            k.EndEdit();
-                        }
-                        if (Convert.ToInt32(k["HP"]) != ListCells[i].hp)
-                        {
-                            k.BeginEdit();
-                            k["HP"] = ListCells[i].hp;
-                            k.EndEdit();
-                        }
-                        if (Convert.ToInt32(k["Group"]) != ListCells[i].group)
-                        {
-                            k.BeginEdit();
-                            k["Group"] = ListCells[i].group;
-                            k.EndEdit();
-                        }
-                        if (ListCells[i].hp <= 0)
-                        {
-                           // k.BeginEdit();
-                            dt.Rows.Remove(k);  //не удаляется, т.к. его могла убить другая клетка позже в листе
-                            //dataGridViewInfo.DataSource = dt;
-                            // k.EndEdit();
-                            // dataGridViewInfo.Refresh();
-                        }
-                    });
+                
 
                 PrintCell(ListCells[i]);
+            }
+
+            foreach (var c in ListCells)
+            {
+                RefreshData(c);
             }
             ListCells.RemoveAll(x => x.hp < 0);
             ListElements.RemoveAll(x => x.age > 400);
@@ -552,6 +528,41 @@ namespace Evolution_3._0
             labelTime.Text = (DateTime.Now - timeStart).ToString().Substring(0, 8);
         }
 
+
+        void RefreshData(Cells c)
+        {
+            dt.AsEnumerable().Where(p => Convert.ToInt32(p["Id"]) == c.idCell).ToList().ForEach( //обновление таблицы
+                    k =>
+                    {
+                        if (Convert.ToInt32(k["MaxHP"]) != c.maxHp)
+                        {
+                            k.BeginEdit();
+                            k["MaxHP"] = c.maxHp;
+                            k.EndEdit();
+                        }
+                        if (Convert.ToInt32(k["HP"]) != c.hp)
+                        {
+                            k.BeginEdit();
+                            k["HP"] = c.hp;
+                            k.EndEdit();
+                        }
+                        if (Convert.ToInt32(k["Group"]) != c.group)
+                        {
+                            k.BeginEdit();
+                            k["Group"] = c.group;
+                            k.EndEdit();
+                        }
+                        if (c.hp <= 0)
+                        {
+                            // k.BeginEdit();
+                            dt.Rows.Remove(k);  //не удаляется, т.к. его могла убить другая клетка позже в листе
+                            // ListCells.Remove(ListCells[i]);
+                            //dataGridViewInfo.DataSource = dt;
+                            // k.EndEdit();
+                            // dataGridViewInfo.Refresh();
+                        }
+                    });
+        }
 
         /// <summary>
         /// рандомная генерация новых элементов
