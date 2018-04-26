@@ -129,5 +129,33 @@ namespace Evolution_3._0
                 y = value;
             }
         }
+
+        public void NewStatus ()
+        {
+            switch (rnd.Next(6))
+            {
+                case 0:
+                    status = 'H';
+                    break;
+                case 1:
+                    status = 'C';
+                    break;
+                case 2:
+                    status = 'N';
+                    break;
+                case 3:
+                    status = 'O';
+                    break;
+                case 4:
+                    status = 'S';
+                    break;
+                case 5:
+                    status = 'P';
+                    break;
+                default:
+                    status = 'E';
+                    break;
+            }
+        }
     }
 }

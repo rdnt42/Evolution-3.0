@@ -13,13 +13,13 @@ namespace Evolution_3._0
 {
     public partial class Form1 : Form
     {
-        char[,] Status = new char[Block.widthField, Block.heightField];
+        byte[,,] Elements = new byte[2, Block.widthField, Block.heightField];
+        enum Status : byte { E, C, O, H, P, N, S };
         byte[,,] rgb = new byte[3, Block.heightMap, Block.widthMap];
         static public Random rnd = new Random();
 
         List<Cells> ListCells = new List<Cells>();
         List<Food> ListFoods = new List<Food>();
-        List<Block> ListElements = new List<Block>();
         DateTime timeStart;
 
         DataTable dt = new DataTable();
@@ -57,34 +57,41 @@ namespace Evolution_3._0
             {
                 for (int x = 0; x < Block.widthField; x++)
                 {
-                    switch (rnd.Next(12))
-                    {
-                        case 0:
-                            Status[x, y] = 'H';
-                            break;
-                        case 1:
-                            Status[x, y] = 'C';
-                            break;
-                        case 2:
-                            Status[x, y] = 'N';
-                            break;
-                        case 3:
-                            Status[x, y] = 'O';
-                            break;
-                        case 4:
-                            Status[x, y] = 'S';
-                            break;
-                        case 5:
-                            Status[x, y] = 'P';
-                            break;
-                        default:
-                            Status[x, y] = 'E';
-                            break;
-                    }
+                    CreateElement(x, y);
+                    Elements[1, x, y] = 0;
                 }
             }
             PrintElement();
             DrowAll();
+        }
+
+
+        public void CreateElement (int x, int y)
+        {
+            switch (rnd.Next(12))
+            {
+                case 0:
+                    Elements[0, x, y] = (byte)Status.H;
+                    break;
+                case 1:
+                    Elements[0, x, y] = (byte)Status.C;
+                    break;
+                case 2:
+                    Elements[0, x, y] = (byte)Status.N;
+                    break;
+                case 3:
+                    Elements[0, x, y] = (byte)Status.O;
+                    break;
+                case 4:
+                    Elements[0, x, y] = (byte)Status.S;
+                    break;
+                case 5:
+                    Elements[0, x, y] = (byte)Status.P;
+                    break;
+                default:
+                    Elements[0, x, y] = (byte)Status.E;
+                    break;
+            }
         }
 
         /// <summary>
@@ -97,13 +104,13 @@ namespace Evolution_3._0
             /////////////////////////здесь заполнение массива карты
             for (int y = 2; y < Block.heightField - 2; y++)
                 for (int x = 2; x < Block.widthField - 2; x++)
-                    if (Status[x, y] == 'C')
+                   if (Elements[0,x,y] == (byte)Status.C)
                         CreateOrganic(2, 3, 2, 2, x, y);
 
 
             for (int y = 0; y < Block.heightField; y++)
                 for (int x = 0; x < Block.widthField; x++)
-                    Status[x, y] = 'E';
+                    Elements[0, x, y] = (byte)Status.E;
 
             PrintElement();
             foreach (var c in ListCells)
@@ -111,7 +118,6 @@ namespace Evolution_3._0
             foreach (var f in ListFoods)
                 PrintFood(f);
             DrowAll();
-
         }
 
         /// <summary>
@@ -138,7 +144,6 @@ namespace Evolution_3._0
             {
                 (ListCells.Find(x => x.idCell == Convert.ToInt32(dataGridViewInfo.Rows[e.RowIndex].Cells[e.ColumnIndex].Value))).isSelect = true; ; // лямбда выражение (и предикат для поиска)
             }
-
         }
 
         /// <summary>
@@ -336,27 +341,27 @@ namespace Evolution_3._0
             {
                 for (int x = 0; x < Block.widthField; x++)
                 {
-                    switch (Status[x, y])
+                   switch (Elements[0, x, y] )
                     {
-                        case 'E':
+                        case (byte)Status.E:
                             r = 173; g = 216; b = 230;
                             break;
-                        case 'C':
+                        case (byte)Status.C:
                             r = 255; g = 104; b = 0;
                             break;
-                        case 'N':
+                        case (byte)Status.N:
                             r = 0; g = 184; b = 217;
                             break;
-                        case 'H':
+                        case (byte)Status.H:
                             r = 138; g = 127; b = 128;
                             break;
-                        case 'O':
+                        case (byte)Status.O:
                             r = 173; g = 216; b = 230;
                             break;
-                        case 'S':
+                        case (byte)Status.S:
                             r = 143; g = 254; b = 9;
                             break;
-                        case 'P':
+                        case (byte)Status.P:
                             r = 10; g = 10; b = 10;
                             break;
                     }
@@ -403,18 +408,18 @@ namespace Evolution_3._0
             {
                 for (int x = xCell - 2; x <= xCell + 2; x++)
                 {
-                    switch (Status[x, y])
+                    switch (Elements[0, x, y])
                     {
-                        case 'H':
+                        case (byte)Status.H:
                             hydrogen++;
                             break;
-                        case 'C':
+                        case (byte)Status.C:
                             carbon++;
                             break;
-                        case 'N':
+                        case (byte)Status.N:
                             nytrogen++;
                             break;
-                        case 'O':
+                        case (byte)Status.O:
                             oxygen++;
                             break;
                     }
@@ -429,7 +434,7 @@ namespace Evolution_3._0
 
                 for (int y = yCell - 2; y <= yCell + 2; y++)
                     for (int x = xCell - 2; x <= xCell + 2; x++)
-                        Status[x, y] = 'E';
+                        Elements[0, x, y] = (byte)Status.E;
 
                 DataRow r = dt.NewRow();
                 r["Id"] = c.idCell;
@@ -448,7 +453,8 @@ namespace Evolution_3._0
 
                 for (int y = yCell - 2; y <= yCell + 2; y++)
                     for (int x = xCell - 2; x <= xCell + 2; x++)
-                        Status[x, y] = 'E';
+                        // Status[x, y] = 'E';
+                        Elements[0, x, y] = (byte)Status.E;
             }
         }
 
@@ -473,20 +479,9 @@ namespace Evolution_3._0
         /// <param name="e"></param>
         private void timerTurn_Tick(object sender, EventArgs e)
         {
-            //увеличение возраста элементов и очистка массива Status[,] от превысивших лимит
-            foreach (var el in ListElements)
-            {
-                el.age++;
-                if (el.age > 400)
-                    Status[el.X, el.Y] = 'E';
-            }
-            //удаление элементов превысивших лимит
-
-
-            GenerationElement();
+           GenerationElement();
 
             PrintElement();
-
             foreach (var f in ListFoods)
             {
                 PrintFood(f);
@@ -520,11 +515,24 @@ namespace Evolution_3._0
                 RefreshData(c);
             }
             ListCells.RemoveAll(x => x.hp < 0);
-            ListElements.RemoveAll(x => x.age > 400);
-
+            for (int y = 0; y < Block.heightField; y++)
+            {
+                for (int x = 0; x < Block.widthField; x++)
+                {
+                    if (Elements[0, x, y] != (byte)Status.E)
+                    {
+                        Elements[1, x, y]++;
+                        if (Elements[1, x, y] >= 250)
+                        {
+                            Elements[0, x, y] = (byte)Status.E;
+                            Elements[1, x, y] = 0;
+                        }
+                    }
+                }
+            }
             labelCells.Text = ListCells.Count.ToString();
             labelFoods.Text = ListFoods.Count.ToString();
-            labelElements.Text = ListElements.Count.ToString();
+           
             labelTime.Text = (DateTime.Now - timeStart).ToString().Substring(0, 8);
         }
 
@@ -554,12 +562,7 @@ namespace Evolution_3._0
                         }
                         if (c.hp <= 0)
                         {
-                            // k.BeginEdit();
                             dt.Rows.Remove(k);  //не удаляется, т.к. его могла убить другая клетка позже в листе
-                            // ListCells.Remove(ListCells[i]);
-                            //dataGridViewInfo.DataSource = dt;
-                            // k.EndEdit();
-                            // dataGridViewInfo.Refresh();
                         }
                     });
         }
@@ -577,11 +580,9 @@ namespace Evolution_3._0
                 x = rnd.Next(2, Block.widthField - 2);
                 y = rnd.Next(2, Block.heightField - 2);
 
-                if (Status[x, y] == 'E')
+               if (Elements[0, x, y] == (byte)Status.E)
                 {
-                    Block element = new Block(6, x, y);
-                    ListElements.Add(element);
-                    Status[x, y] = element.status;
+                    CreateElement(x, y);
                     CreateOrganic(0, 0, 0, 1, x, y);
                 }
             }
