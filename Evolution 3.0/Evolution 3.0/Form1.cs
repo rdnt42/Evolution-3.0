@@ -34,6 +34,7 @@ namespace Evolution_3._0
             dt.Columns.Add("Group");
             dt.Columns.Add("HP");
             dt.Columns.Add("MaxHP");
+            dt.Columns.Add("Eat");
             /////////////BITMAP MY GAME/////////////////////////////////////////////////////////////////////
             map.Size = new Size(Block.widthMap, Block.heightMap);
             map.Location = new Point(0, 0);
@@ -66,7 +67,7 @@ namespace Evolution_3._0
         }
 
 
-        public void CreateElement (int x, int y)
+        public void CreateElement(int x, int y)
         {
             switch (rnd.Next(12))
             {
@@ -104,7 +105,7 @@ namespace Evolution_3._0
             /////////////////////////здесь заполнение массива карты
             for (int y = 2; y < Block.heightField - 2; y++)
                 for (int x = 2; x < Block.widthField - 2; x++)
-                   if (Elements[0,x,y] == (byte)Status.C)
+                    if (Elements[0, x, y] == (byte)Status.C)
                         CreateOrganic(2, 3, 2, 2, x, y);
 
 
@@ -231,15 +232,13 @@ namespace Evolution_3._0
                     if (x < 2 || x >= Block.widthCell - 2 || y < 2 || y >= Block.heightCell - 2)
                     {
                         if (c.isSelect)
-                        {
                             //белая рамка при выделении объекта
                             PrintRGB(c.X + x, c.Y + y, 255, 255, 255);
-                        }
+                        else if (c.agro)
+                            PrintRGB(c.X + x, c.Y + y, 255, 0, 0);
                         else
-                        {
                             //черная рамка вокруг клетки
                             PrintRGB(c.X + x, c.Y + y, 0, 0, 0);
-                        }
                     }
                     else
                     {
@@ -341,7 +340,7 @@ namespace Evolution_3._0
             {
                 for (int x = 0; x < Block.widthField; x++)
                 {
-                   switch (Elements[0, x, y] )
+                    switch (Elements[0, x, y])
                     {
                         case (byte)Status.E:
                             r = 173; g = 216; b = 230;
@@ -441,11 +440,12 @@ namespace Evolution_3._0
                 r["Group"] = c.group;
                 r["MaxHP"] = c.maxHp;
                 r["HP"] = c.hp;
+                r["Eat"] = c.Fullness;
                 dt.Rows.Add(r);
                 dataGridViewInfo.DataSource = dt;
             }
 
-            else if (hydrogen > minHydrogen && carbon > minCarbon)//&& oxygen > minOxygen && nytrogen >= minNytrogen)
+            else if (hydrogen > minHydrogen && carbon > minCarbon && oxygen > minOxygen)// && nytrogen >= minNytrogen)
             {
                 //create Food
                 Food f = new Food(xCell * Block.widthBlock, yCell * Block.heightBlock);
@@ -479,7 +479,7 @@ namespace Evolution_3._0
         /// <param name="e"></param>
         private void timerTurn_Tick(object sender, EventArgs e)
         {
-           GenerationElement();
+            GenerationElement();
 
             PrintElement();
             foreach (var f in ListFoods)
@@ -490,6 +490,8 @@ namespace Evolution_3._0
             for (int i = 0; i < ListCells.Count; i++)
             {
                 //движение всех клеток
+                ListCells[i].Hunger();
+                labelElements.Text = DateTime.Now.Millisecond.ToString();
                 ListCells[i].Moving(ListFoods, ListCells);
                 if (ListCells[i].Born())
                 {
@@ -500,12 +502,13 @@ namespace Evolution_3._0
                     r["Group"] = cell.group;
                     r["MaxHP"] = cell.maxHp;
                     r["HP"] = cell.hp;
+                    r["Eat"] = cell.Fullness;
                     dt.Rows.Add(r);
                     dataGridViewInfo.DataSource = dt;
                 }
 
                 //обновление таблицы данных при изменении кол-ва hp,maxHp,group
-                
+
 
                 PrintCell(ListCells[i]);
             }
@@ -514,8 +517,10 @@ namespace Evolution_3._0
             {
                 RefreshData(c);
             }
+
             ListCells.RemoveAll(x => x.hp < 0);
-            for (int y = 0; y < Block.heightField; y++)
+
+            for (int y = 0; y < Block.heightField; y++) //старение и удаление элементов
             {
                 for (int x = 0; x < Block.widthField; x++)
                 {
@@ -532,7 +537,7 @@ namespace Evolution_3._0
             }
             labelCells.Text = ListCells.Count.ToString();
             labelFoods.Text = ListFoods.Count.ToString();
-           
+
             labelTime.Text = (DateTime.Now - timeStart).ToString().Substring(0, 8);
         }
 
@@ -560,6 +565,12 @@ namespace Evolution_3._0
                             k["Group"] = c.group;
                             k.EndEdit();
                         }
+                        /*if (Convert.ToInt32(k["Eat"]) != c.Fullness)
+                        {
+                            k.BeginEdit();
+                            k["Eat"] = c.Fullness;
+                            k.EndEdit();
+                        }*/
                         if (c.hp <= 0)
                         {
                             dt.Rows.Remove(k);  //не удаляется, т.к. его могла убить другая клетка позже в листе
@@ -574,13 +585,13 @@ namespace Evolution_3._0
         {
             int x;
             int y;
-            int num = rnd.Next(1, 6);
+            int num = rnd.Next(6, 13);
             for (int i = 0; i < num; i++)
             {
                 x = rnd.Next(2, Block.widthField - 2);
                 y = rnd.Next(2, Block.heightField - 2);
 
-               if (Elements[0, x, y] == (byte)Status.E)
+                if (Elements[0, x, y] == (byte)Status.E)
                 {
                     CreateElement(x, y);
                     CreateOrganic(0, 0, 0, 1, x, y);

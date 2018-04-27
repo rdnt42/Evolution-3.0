@@ -73,7 +73,7 @@
             // 
             // timerTurn
             // 
-            this.timerTurn.Interval = 25;
+            this.timerTurn.Interval = 20;
             this.timerTurn.Tick += new System.EventHandler(this.timerTurn_Tick);
             // 
             // labelCellsShow
@@ -102,9 +102,9 @@
             this.dataGridViewInfo.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells;
             this.dataGridViewInfo.BackgroundColor = System.Drawing.SystemColors.ButtonFace;
             this.dataGridViewInfo.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridViewInfo.Location = new System.Drawing.Point(1080, 255);
+            this.dataGridViewInfo.Location = new System.Drawing.Point(1033, 255);
             this.dataGridViewInfo.Name = "dataGridViewInfo";
-            this.dataGridViewInfo.Size = new System.Drawing.Size(260, 312);
+            this.dataGridViewInfo.Size = new System.Drawing.Size(307, 312);
             this.dataGridViewInfo.TabIndex = 9;
             this.dataGridViewInfo.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridViewInfo_CellClick);
             this.dataGridViewInfo.CellLeave += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridViewInfo_CellLeave);

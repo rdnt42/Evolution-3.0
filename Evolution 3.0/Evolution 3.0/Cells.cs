@@ -18,12 +18,17 @@ namespace Evolution_3._0
         public int hp;
         public int maxHp;
         public int range;
+        public int attackCooldown;
         int stepLength;
         int x;
         int y;
         public int prewX;
         public int prewY;
         public bool isSelect;
+        public bool agro;
+        int fullness;
+        int hungerCooldown;
+
 
         public Cells(int carbon, int xCell, int yCell)
         {
@@ -43,7 +48,11 @@ namespace Evolution_3._0
             stepLength = 2;
             maxHp = 50 + 100 * group;
             hp = maxHp;
+            attackCooldown = 0;
+            hungerCooldown = 0;
             isSelect = false;
+            agro = false;
+            Fullness = 100;
         }
 
 
@@ -74,6 +83,22 @@ namespace Evolution_3._0
             }
         }
 
+        public int Fullness
+        {
+            get
+            {
+                return fullness;
+            }
+            set
+            {
+                if (value < 0)
+                    fullness = 0;
+                else if (value > 100)
+                    fullness = 100;
+                else
+                    fullness = value;
+            }
+        }
 
         public void Moving(List<Food> Foods, List<Cells> Cells)
         {
@@ -92,7 +117,7 @@ namespace Evolution_3._0
                 int h = Y - f.Y;
                 int w = X - f.X;
 
-                double hypotenuse = Math.Sqrt(h*h + w*w);
+                double hypotenuse = Math.Sqrt(h * h + w * w);
 
                 if (hypotenuse <= range && hypotenuse < prewHypotenuse)
                 {
@@ -102,20 +127,22 @@ namespace Evolution_3._0
                 countFood++;
             }
 
-
-            foreach (var c in Cells)
+            if (agro)
             {
-                int h = Y - c.Y;
-                int w = X - c.X;
-
-                double hypotenuse = Math.Sqrt(h * h + w * w);
-
-                if (hypotenuse <= range && hypotenuse < prewHypotenuse && idCell !=c.idCell)
+                foreach (var c in Cells)
                 {
-                    prewHypotenuse = hypotenuse;
-                    catchCell = countCell;
+                    int h = Y - c.Y;
+                    int w = X - c.X;
+
+                    double hypotenuse = Math.Sqrt(h * h + w * w);
+
+                    if (hypotenuse <= range && hypotenuse < prewHypotenuse && idCell != c.idCell)
+                    {
+                        prewHypotenuse = hypotenuse;
+                        catchCell = countCell;
+                    }
+                    countCell++;
                 }
-                countCell++;
             }
 
             if (catchCell != -1)
@@ -124,13 +151,23 @@ namespace Evolution_3._0
                 int deltaX = Cells[catchCell].X - X;
                 int deltaY = Cells[catchCell].Y - Y;
                 int stepX = 0;
-                int stepY;
+                int stepY = 0;
 
-                if (time ==0)
+                if (attackCooldown <=0 && time <= 3) //время установлено экспериментальным путем
                 {
                     stepX = 0;
                     stepY = 0;
-                    Cells[catchCell].hp -= rnd.Next(10);
+                    Cells[catchCell].hp -= rnd.Next(20,50);
+                    if (Cells[catchCell].hp <= 0)
+                        Fullness += 60;
+                    attackCooldown = 20;              //время до следующей атаки
+                }
+
+                else if (attackCooldown>0)
+                {
+                    stepX = -deltaX / time;
+                    stepY = -deltaY / time;
+                    attackCooldown--;
                 }
                 else
                 {
@@ -165,7 +202,7 @@ namespace Evolution_3._0
                 if (deltaX == 0 && deltaY == 0)   //здесь клетка съедает еду
                 {
                     Foods.Remove(Foods[catchFood]);
-
+                    Fullness += 10;
                     int upHp = 10;
                     maxHp += upHp;
 
@@ -174,7 +211,7 @@ namespace Evolution_3._0
                     else
                         hp = maxHp;
 
-                    if (maxHp >= 50 + 100 * group +50)
+                    if (maxHp >= 50 + 100 * group + 50)
                         group++;
                 }
             }
@@ -184,6 +221,20 @@ namespace Evolution_3._0
                 X += moveX * stepLength;
                 Y += moveY * stepLength;
             }
+        }
+
+        public void Hunger ()
+        {
+            if (hungerCooldown <= 0)
+            {
+                Fullness--;
+                hungerCooldown = 50;
+            }
+            hungerCooldown--;
+            if (Fullness <= 40)
+                agro = true;
+            else
+                agro = false;
         }
 
         public bool Born()
