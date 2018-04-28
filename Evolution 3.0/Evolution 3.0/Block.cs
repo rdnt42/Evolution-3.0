@@ -17,10 +17,10 @@ namespace Evolution_3._0
         public int idBlock;
 
         public char status;
-         int x;
-         int y;
+        int x;
+        int y;
         public int age;
-        
+
 
         static public Random rnd = new Random();
 
@@ -28,10 +28,10 @@ namespace Evolution_3._0
         public static int widthField = 200;
         public static int heightBlock = 5;
         public static int widthBlock = 5;
-        public static int heightMap = heightBlock* heightField;
-        public static int widthMap = widthBlock* widthField;
+        public static int heightMap = heightBlock * heightField;
+        public static int widthMap = widthBlock * widthField;
         public static int countBlocks = widthField * heightField;
-        
+
         public static int heightFood = heightBlock * 4;
         public static int widthFood = widthBlock * 4;
         public static int heightCell = heightBlock * 6;
@@ -129,8 +129,31 @@ namespace Evolution_3._0
                 y = value;
             }
         }
-
-        public void NewStatus ()
+        public static void CreateMap(string size, int pix)
+        {
+            if (size == "1600 x 900")
+            {
+                widthMap = 1200;
+                heightMap = 700;
+            }
+            else if (size == "1366 x 768")
+            {
+                widthMap = 1000;
+                heightMap = 625;
+                if (pix == 4)
+                    heightMap = 624;
+            }
+            widthBlock = pix;
+            heightBlock = pix;
+            widthField = widthMap / widthBlock;
+            heightField = heightMap / heightBlock;
+            countBlocks = widthField * heightField;
+            heightFood = heightBlock * 4;
+            widthFood = widthBlock * 4;
+            heightCell = heightBlock * 6;
+            widthCell = widthBlock * 6;
+        }
+        public void NewStatus()
         {
             switch (rnd.Next(6))
             {

@@ -15,7 +15,7 @@ namespace Evolution_3._0
         public int idCell;
 
         public int group;
-        public int hp;
+        int hp;
         public int maxHp;
         public int range;
         public int attackCooldown;
@@ -100,6 +100,22 @@ namespace Evolution_3._0
             }
         }
 
+        public int Hp
+        {
+            get
+            {
+                return hp;
+            }
+
+            set
+            {
+                if (value >= maxHp)
+                    hp = maxHp;
+                else
+                    hp = value;
+            }
+        }
+
         public void Moving(List<Food> Foods, List<Cells> Cells)
         {
             double prewHypotenuse = range + 1;
@@ -153,18 +169,24 @@ namespace Evolution_3._0
                 int stepX = 0;
                 int stepY = 0;
 
-                if (attackCooldown <=0 && time <= 3) //время установлено экспериментальным путем
+                if (attackCooldown <= 0 && time <= 3) //время установлено экспериментальным путем
                 {
                     stepX = 0;
                     stepY = 0;
-                    Cells[catchCell].hp -= rnd.Next(20,50);
-                    if (Cells[catchCell].hp <= 0)
+                    Cells[catchCell].Hp -= rnd.Next(20, 50);
+                    if (Cells[catchCell].Hp <= 0)
+                    {
                         Fullness += 60;
+                        Hp += Cells[catchCell].maxHp / 4;
+                    }
+
                     attackCooldown = 20;              //время до следующей атаки
                 }
 
-                else if (attackCooldown>0)
+                else if (attackCooldown > 0)
                 {
+                    if (time == 0)
+                        time = 1;
                     stepX = -deltaX / time;
                     stepY = -deltaY / time;
                     attackCooldown--;
@@ -205,12 +227,7 @@ namespace Evolution_3._0
                     Fullness += 10;
                     int upHp = 10;
                     maxHp += upHp;
-
-                    if (hp <= maxHp - upHp * 3)
-                        hp += upHp * 3;
-                    else
-                        hp = maxHp;
-
+                    Hp += upHp * 3;
                     if (maxHp >= 50 + 100 * group + 50)
                         group++;
                 }
@@ -223,7 +240,7 @@ namespace Evolution_3._0
             }
         }
 
-        public void Hunger ()
+        public void Hunger()
         {
             if (hungerCooldown <= 0)
             {
@@ -239,10 +256,10 @@ namespace Evolution_3._0
 
         public bool Born()
         {
-            if (maxHp > 800 && hp > 600)
+            if (maxHp > 800 && Hp > 600)
             {
                 maxHp /= 2;
-                hp /= 2;
+                Hp /= 2;
                 group /= 2;
                 X -= Block.widthCell;
                 return true;

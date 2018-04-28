@@ -13,9 +13,9 @@ namespace Evolution_3._0
 {
     public partial class Form1 : Form
     {
-        byte[,,] Elements = new byte[2, Block.widthField, Block.heightField];
+        byte[,,] Elements; 
         enum Status : byte { E, C, O, H, P, N, S };
-        byte[,,] rgb = new byte[3, Block.heightMap, Block.widthMap];
+        byte[,,] rgb;
         static public Random rnd = new Random();
 
         List<Cells> ListCells = new List<Cells>();
@@ -29,22 +29,39 @@ namespace Evolution_3._0
         public Form1()
         {
             InitializeComponent();
-
+            comboBoxBlock.SelectedIndex = 4;
+            comboBoxSize.SelectedIndex = 1;
             dt.Columns.Add("Id");
             dt.Columns.Add("Group");
             dt.Columns.Add("HP");
             dt.Columns.Add("MaxHP");
-            dt.Columns.Add("Eat");
-            /////////////BITMAP MY GAME/////////////////////////////////////////////////////////////////////
-            map.Size = new Size(Block.widthMap, Block.heightMap);
-            map.Location = new Point(0, 0);
-            this.Controls.Add(map);
         }
 
         /************************************ ОБРАБОТЧИКИ КНОПОК *********************************************
          *****************************************************************************************************
          *****************************************************************************************************
          ******************************************************************************************************/
+
+
+        private void buttonSumbit_Click(object sender, EventArgs e)
+        {
+            if (comboBoxSize.Text!="" && comboBoxBlock.Text!="")
+            {
+                Block.CreateMap(comboBoxSize.Text, Convert.ToInt32(comboBoxBlock.Text));
+                /////////////BITMAP MY GAME/////////////////////////////////////////////////////////////////////
+                Elements = new byte[2, Block.widthField, Block.heightField];
+                rgb = new byte[3, Block.heightMap, Block.widthMap];
+                map.Size = new Size(Block.widthMap, Block.heightMap);
+                map.Location = new Point(0, 0);
+                this.Controls.Add(map);
+                btnStart.Enabled = true;
+                btnCreate.Enabled = true;
+                btnGeneration.Enabled = true;
+                comboBoxSize.Visible = false;
+                comboBoxBlock.Visible = false;
+                btnSumbit.Visible = false;
+            }
+        }
 
         /// <summary>
         ///   начальная геренация элементов на поле
@@ -439,8 +456,7 @@ namespace Evolution_3._0
                 r["Id"] = c.idCell;
                 r["Group"] = c.group;
                 r["MaxHP"] = c.maxHp;
-                r["HP"] = c.hp;
-                r["Eat"] = c.Fullness;
+                r["HP"] = c.Hp;
                 dt.Rows.Add(r);
                 dataGridViewInfo.DataSource = dt;
             }
@@ -501,8 +517,7 @@ namespace Evolution_3._0
                     r["Id"] = cell.idCell;
                     r["Group"] = cell.group;
                     r["MaxHP"] = cell.maxHp;
-                    r["HP"] = cell.hp;
-                    r["Eat"] = cell.Fullness;
+                    r["HP"] = cell.Hp;
                     dt.Rows.Add(r);
                     dataGridViewInfo.DataSource = dt;
                 }
@@ -518,7 +533,7 @@ namespace Evolution_3._0
                 RefreshData(c);
             }
 
-            ListCells.RemoveAll(x => x.hp < 0);
+            ListCells.RemoveAll(x => x.Hp < 0);
 
             for (int y = 0; y < Block.heightField; y++) //старение и удаление элементов
             {
@@ -553,10 +568,10 @@ namespace Evolution_3._0
                             k["MaxHP"] = c.maxHp;
                             k.EndEdit();
                         }
-                        if (Convert.ToInt32(k["HP"]) != c.hp)
+                        if (Convert.ToInt32(k["HP"]) != c.Hp)
                         {
                             k.BeginEdit();
-                            k["HP"] = c.hp;
+                            k["HP"] = c.Hp;
                             k.EndEdit();
                         }
                         if (Convert.ToInt32(k["Group"]) != c.group)
@@ -571,7 +586,7 @@ namespace Evolution_3._0
                             k["Eat"] = c.Fullness;
                             k.EndEdit();
                         }*/
-                        if (c.hp <= 0)
+                        if (c.Hp <= 0)
                         {
                             dt.Rows.Remove(k);  //не удаляется, т.к. его могла убить другая клетка позже в листе
                         }
@@ -585,7 +600,7 @@ namespace Evolution_3._0
         {
             int x;
             int y;
-            int num = rnd.Next(6, 13);
+            int num = rnd.Next(7, 14);
             for (int i = 0; i < num; i++)
             {
                 x = rnd.Next(2, Block.widthField - 2);
@@ -597,6 +612,16 @@ namespace Evolution_3._0
                     CreateOrganic(0, 0, 0, 1, x, y);
                 }
             }
+        }
+
+        private void comboBoxBlock_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void comboBoxSize_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }
